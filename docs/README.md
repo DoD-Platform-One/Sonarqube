@@ -40,7 +40,14 @@ SONARQUBE_JDBC_PASSWORD - password for the above user
 
 These need to be added in as Kubernetes secrets and mounted into the sonarqube pod <https://kubernetes.io/docs/concepts/configuration/secret/>.
 
+This BigBang chart has the following value fed in as a `JDK_JAVA_OPTIONS` environment variable in order to alleviate issues when running on FIPS enabled Kubernetes nodes: `-Dcom.redhat.fips=false`. If there is need to add in your own `JDK_JAVA_OPTIONS` flag ensure that that fips related flag is also present either before or after any other flags. Also if there is any other env value that is overridden into the chart please ensure you also add this YAML so the `JDK_JAVA_OPTIONS` variable is present in the deployment:
 
+```yaml
+env:
+  ...
+  - name: JDK_JAVA_OPTIONS
+    value: "-Dcom.redhat.fips=false"
+```
 
 #### Default Admin Credentials
 
