@@ -1,8 +1,11 @@
 # SonarQube Chart Changelog
 All changes to this chart will be documented in this file.
-## [9.6.3]
-* Fixed GH-277 by ensuring current/new admin passwords are URL escaped in the change-admin-password-hook job.
-* Add imagepull policy for admin password hook
+
+## [1.0.31]
+* Updated SonarQube LTS to 8.9.10
+
+## [1.0.30]
+* Add documentation for ingress tls
 
 ## [1.0.29]
 * updated SonarQube LTS to 8.9.9
@@ -21,7 +24,7 @@ All changes to this chart will be documented in this file.
 
 ## [1.0.24]
 * fixed missing `env` key for the install-plugins container in both the Deployment and StatefulSet
-
+  
 ## [1.0.23]
 * updated SonarQube LTS to 8.9.6
 
@@ -104,40 +107,40 @@ All changes to this chart will be documented in this file.
 * improved readiness/startup and liveness probes
 * improved documentation
 
-## [9.6.2]
+## [0.9.6.2]
 * Change order of env variables to better support 7.9-lts
 
-## [9.6.1]
+## [0.9.6.1]
 * Add support for setting custom annotations in admin hook job.
 
-## [9.6.0]
-* Add the possibility of definining the secret key name of the postgres password.
+## [0.9.6.0]
+* Add the possibility of defining the secret key name of the postgres password.
 
-## [9.5.0]
+## [0.9.5.0]
 * Add Ingress default backend for GCE class
 
-## [9.2.3]
-* Added namespace to port-foward command in notes.
+## [0.9.2.3]
+* Added namespace to port-forward command in notes.
 
-## [9.2.2]
+## [0.9.2.2]
 * Added a condition to deployment.yaml so that `wait-for-db` initContainer is only created if `postgresql.enabled=true`
 
-## [9.2.1]
+## [0.9.2.1]
 * Updated the configuration table to include the additional keys added in release 9.2.0.
 
-## [9.2.0]
+## [0.9.2.0]
 * Added functionality for deployments to OpenShift clusters.
     * .Values.OpenShift flag to signify if deploying to OpenShift.
 	* Ability to have chart generate an SCC allowing the init-sysctl container to run as privileged.
-	* Setting of a seperate securityContext section for the main SonarQube container to avoid running as root.
+	* Setting of a separate securityContext section for the main SonarQube container to avoid running as root.
 	* Exposing additional `postreSQL` keys in values.yaml to support configuring postgres to run under standard "restricted" or "anyuid"/"nonroot" SCCs on OpenShift.
 * Added initContainer `wait-for-db` to await postgreSQL successful startup before starting SonarQube, to avoid race conditions.
 
-## [9.1.1]
+## [0.9.1.1]
 * Update SonarQube to 8.5.1.
 * **Fix:** Purge plugins directory before download.
 
-## [9.0.0]
+## [0.9.0.0]
 * Update SonarQube to 8.5.
 * **Breaking change:** Rework init containers.
     * Move global defaults from `plugins` section to `initContainers`.

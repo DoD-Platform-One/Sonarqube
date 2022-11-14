@@ -1,6 +1,11 @@
 # Default values for sonarqube.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+
+deploymentType: "Deployment"
+
+# If the deployment Type is set to Deployment sonarqube is deployed as a replica set
+# There should not be more than 1 sonarqube instance connected to the same database
 replicaCount: 1
 
  # This will use the default deployment strategy unless it is overriden
@@ -21,7 +26,7 @@ OpenShift:
 
 image:
   repository: registry1.dso.mil/ironbank/big-bang/sonarqube
-  tag: 8.9.9-community
+  tag: 8.9.10-community
   pullPolicy: IfNotPresent
   # If using a private repository, the name of the imagePullSecret to use
   pullSecret: private-registry
@@ -45,6 +50,10 @@ elasticsearch:
   configureNode: false
   bootstrapChecks: true
 
+# also install the nginx ingress helm chart
+nginx:
+  enabled: false
+
 service:
   type: ClusterIP
   externalPort: 9000
@@ -60,7 +69,7 @@ ingress:
   enabled: false
   # Used to create an Ingress record.
   hosts:
-    - name: sonar.organization.com
+    - name: sonarqube.your-org.com
       # Different clouds or configurations might need /* as the default path
       path: /
       # For additional control over serviceName and servicePort
@@ -77,7 +86,7 @@ ingress:
   #  traffic-type: external
   #  traffic-type: internal
   tls: []
-  # Secrets must be manually created in the namespace.
+  # Secrets must be manually created in the namespace. To generate a self-signed certificate (and private key) and then create the secret in the cluster please refer to official documentation available at https://kubernetes.github.io/ingress-nginx/user-guide/tls/#tls-secrets
   # - secretName: chart-example-tls
   #   hosts:
   #     - chart-example.local
@@ -88,11 +97,21 @@ affinity: {}
 
 # Tolerations for pod assignment
 # Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+# taint a node with the following command to mark it as not schedulable for new pods
+# kubectl taint nodes <node> sonarqube=true:NoSchedule
+# The following statement will tolerate this taint and as such reverse a node for sonarqube
 tolerations: []
+#  - key: "sonarqube"
+#    operator: "Equal"
+#    value: "true"
+#    effect: "NoSchedule"
 
 # Node labels for pod assignment
 # Ref: https://kubernetes.io/docs/user-guide/node-selection/
+# add a label to a node with the following command
+# kubectl label node <node> sonarqube=true
 nodeSelector: {}
+#  sonarqube: "true"
 
 # hostAliases allows the modification of the hosts file inside a container
 hostAliases: []
@@ -112,12 +131,21 @@ readinessProbe:
 livenessProbe:
   initialDelaySeconds: 60
   periodSeconds: 30
+  failureThreshold: 6
   # If an ingress *path* other than the root (/) is defined, it should be reflected here
   # A trailing "/" must be included
   sonarWebContext: /
   # sonarWebContext: /sonarqube/
   # If an ingress *path* is defined, it should be reflected here
   # sonar.web.context: /sonarqube
+startupProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 24
+  # If an ingress *path* other than the root (/) is defined, it should be reflected here
+  # A trailing "/" must be included
+  sonarWebContext: /
+  # sonarWebContext: /sonarqube/
 
 initContainers:
   # image:
@@ -140,19 +168,6 @@ initContainers:
 
 extraInitContainers: {}
 # Extra init containers to e.g. download required artifacts
-#  - name: "prometheus-exporter-downloader"
-#    image: ""
-#    imagePullPolicy: "IfNotPresent"
-#    securityContext:
-#      runAsNonRoot: true
-#    command:
-#      - wget
-#      - "-O"
-#      - "/downloads/jmx_prometheus_javaagent.jar"
-#      - ${JMX_EXPORTER_URL}
-#    volumeMounts:
-#      - name: "downloads"
-#        mountPath: "/downloads"
 
 waitForDb:
   image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.12
@@ -180,6 +195,42 @@ initSysctl:
         - ALL
   # resources: {}
 
+initFs:
+  enabeld: false
+  # image: 
+  securityContext:
+    privileged: true
+
+prometheusExporter:
+  enabled: false
+  # jmx_prometheus_javaagent version to download from Maven Central
+  # version: "0.15.0"
+  # Alternative full download URL for the jmx_prometheus_javaagent.jar (overrides prometheusExporter.version)
+  # downloadURL: ""
+  # if you need to ignore TLS certificates for whatever reason enable the following flag
+  # noCheckCertificate: false
+
+  # Ports for the jmx prometheus agent to export metrics at
+  # webBeanPort: 8000
+  # ceBeanPort: 8001
+
+  # config:
+  #   rules:
+  #     - pattern: ".*"
+  # Overrides config for the CE process Prometheus exporter (by default, the same rules are used for both the Web and CE processes).
+  # ceConfig:
+  #   rules:
+  #     - pattern: ".*"
+  # image: curlimages/curl:7.76.1
+  # For use behind a corporate proxy when downloading prometheus
+  # httpProxy: ""
+  # httpsProxy: ""
+  # noProxy: ""
+  # Setting the security context to root as the /data volume is owned by root at this stage
+  # securityContext:
+  #   runAsUser: 0
+  #   runAsGroup: 0
+
 # List of plugins to install.
 # For example:
 # plugins:
@@ -195,7 +246,7 @@ plugins:
   # httpsProxy: ""
   # noProxy: ""
 
-  image: registry1.dso.mil/ironbank/big-bang/sonarqube:8.9.9-community
+  image: registry1.dso.mil/ironbank/big-bang/sonarqube:8.9.10-community
   # resources: {}
 
   # .netrc secret file with a key "netrc" to use basic auth while downloading plugins
@@ -203,11 +254,21 @@ plugins:
 
   # Set to true to not validate the server's certificate to download plugin
   noCheckCertificate: false
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
 
 ## Values to add to SONARQUBE_WEB_JVM_OPTS
 ##
 # jvmOpts: "-Djava.net.preferIPv4Stack=true"
 jvmOpts: ""
+
+## Values to add to SONAR_CE_JAVAOPTS
+jvmCeOpts: ""
+
+## a monitoring passcode needs to be defined in order to get reasonable probe results
+# not setting the monitoring passcode will result in a deployment that will never be ready
+monitoringPasscode: "define_it"
 
 ## Environment variables to attach to the pods
 ##
@@ -220,11 +281,10 @@ env:
 # Set annotations for pods
 annotations: {}
 
+## We usually don't make specific ressource recommandations, as they are heavily dependend on
+## The usage of SonarQube and the surrounding infrastructure.
+## Adjust these values to your needs, but make sure that the memory limit is never under 4 GB
 resources:
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
     cpu: 300m
     memory: 2.5Gi
@@ -249,6 +309,7 @@ persistence:
   storageClass:
   accessMode: ReadWriteOnce
   size: 10Gi
+  uid: 1000
 
   ## Specify extra volumes. Refer to ".spec.volumes" specification : https://kubernetes.io/fr/docs/concepts/storage/volumes/
   volumes: []
