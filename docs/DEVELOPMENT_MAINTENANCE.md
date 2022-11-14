@@ -99,6 +99,7 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 ## chart/templates/deployment.yaml & sonarqube-sts.yaml
 - remove default images
 - change waitForDb from using `nc` to a `pg_isready`
+- modify caCert init container to conditionally use command/args from values
 
 ## chart/templates/install-plugins.yaml
 - switched upstream cat/wget plugin install to curl
