@@ -69,8 +69,18 @@ spec:
         - name: ca-certs
           image: {{ .Values.caCerts.image }}
           imagePullPolicy: {{ .Values.image.pullPolicy  }}
+          {{- if .Values.caCerts.command }}
+          command:
+          {{- toYaml .Values.caCerts.command | nindent 12 }}
+          {{- else }}
           command: ["sh"]
+          {{- end }}
+          {{- if .Values.caCerts.args }}
+          args:
+          {{- toYaml .Values.caCerts.args | nindent 12 }}
+          {{- else }}
           args: ["-c", "cp -f \"${JAVA_HOME}/lib/security/cacerts\" /tmp/certs/cacerts; if [ \"$(ls /tmp/secrets/ca-certs)\" ]; then for f in /tmp/secrets/ca-certs/*; do keytool -importcert -file \"${f}\" -alias \"$(basename \"${f}\")\" -keystore /tmp/certs/cacerts -storepass changeit -trustcacerts -noprompt; done; fi;"]
+          {{- end }}
           {{- if $securityContext := .Values.initContainers.securityContext }}
           securityContext:
 {{ toYaml $securityContext | indent 12 }}
