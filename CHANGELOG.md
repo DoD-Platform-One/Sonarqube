@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [1.0.31-bb.0] - 2022-11-14
+### Updated
+- Updated to version `sonarqube-lts-1.0.31` of upstream helm chart and version 8.9.10 of sonarqube
+
 ## [1.0.29-bb.5] - 2022-10-17
 ### Updated
 - Updated postgres and postgres exporter images
