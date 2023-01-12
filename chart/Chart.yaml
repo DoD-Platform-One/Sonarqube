@@ -27,3 +27,14 @@ annotations:
       image: sonarqube:8.9.10-community
   bigbang.dev/applicationVersions: |
     - Sonarqube: 8.9.10-community
+  # base image used for curlContainerImage override if admin.password is set
+  helm.sh/images: |
+    - name: sonarqube
+      image: registry1.dso.mil/ironbank/big-bang/sonarqube:8.9.10-community
+    - name: base
+      image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
+    - name: postgresql12
+      condition: postgresql.enabled
+      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.13
+
+
