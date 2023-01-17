@@ -3,7 +3,7 @@ dependencies:
   repository: file://./deps/postgresql
   version: 8.6.4
 - name: gluon
-  repository: oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon
-  version: 0.3.1
-digest: sha256:85173ee065fb6507eaf447569ecee2d9a88ac5afc198ca81153c13b2bc83c64b
-generated: "2022-10-17T10:19:29.0628463-07:00"
+  repository: oci://registry1.dso.mil/bigbang
+  version: 0.3.2
+digest: sha256:287ee30cead34c55d897ea7712f00d6256039979ce55731fa2e00915c434fbf4
+generated: "2023-01-17T12:18:25.108918-07:00"
