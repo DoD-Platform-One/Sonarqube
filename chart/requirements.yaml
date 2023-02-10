@@ -1,8 +1,0 @@
-dependencies:
-- name: postgresql
-  version: 8.6.4
-  repository: file://./deps/postgresql
-  condition: postgresql.enabled
-- name: gluon
-  version: "0.3.2"
-  repository: "oci://registry1.dso.mil/bigbang"

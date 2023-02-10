@@ -76,9 +76,6 @@ addons:
 # Modifications made to upstream chart
 This is a high-level list of modifications that Big Bang has made to the upstream helm chart. You can use this as as cross-check to make sure that no modifications were lost during an upgrade process.
 
-##  chart/requirements.yaml
-- remove nginx ingress and move postgres to local file chart in deps
-
 ##  chart/charts/*.tgz
 - add the gluon library archive from ```helm dependency update ./chart```
 
@@ -106,6 +103,7 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 
 ## chart/templates/change-admin-password-hook.yaml
 - re-write job with istio termination
+- change `hook-delete-policy` to add `before-hook-creation`
 
 ## chart/templates/NOTES.txt
 - Added istio.enabled wraper
@@ -119,6 +117,9 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 
 ## chart/Chart.yaml
 - changes for Big Bang version, gluon dependency, and annotations
+
+# chart/Chart.lock
+- add this file during helm dependency update
 
 ## chart/Kptfile
 - add Kptfile

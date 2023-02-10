@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 1.0.31-bb.5](https://img.shields.io/badge/Version-1.0.31--bb.5-informational?style=flat-square) ![AppVersion: 8.9.10](https://img.shields.io/badge/AppVersion-8.9.10-informational?style=flat-square)
+![Version: 8.0.0-bb.0](https://img.shields.io/badge/Version-8.0.0--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.0](https://img.shields.io/badge/AppVersion-9.9.0-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -8,6 +8,7 @@ SonarQube offers Code Quality and Code Security analysis for up to 27 languages.
 * <https://www.sonarqube.org/>
 
 * <https://github.com/SonarSource/docker-sonarqube>
+* <https://github.com/SonarSource/sonarqube>
 
 ## Learn More
 * [Application Overview](docs/overview.md)
@@ -18,6 +19,8 @@ SonarQube offers Code Quality and Code Security analysis for up to 27 languages.
 * Kubernetes Cluster deployed
 * Kubernetes config installed in `~/.kube/config`
 * Helm installed
+
+Kubernetes: `>= 1.19.0-0`
 
 Install Helm
 
@@ -35,16 +38,18 @@ helm install sonarqube chart/
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| deploymentType | string | `"Deployment"` |  |
+| deploymentType | string | `"StatefulSet"` |  |
 | replicaCount | int | `1` |  |
-| deploymentStrategy.type | string | `"Recreate"` |  |
+| deploymentStrategy | object | `{}` |  |
 | OpenShift.enabled | bool | `false` |  |
 | OpenShift.createSCC | bool | `true` |  |
-| image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube"` |  |
-| image.tag | string | `"8.9.10-community"` |  |
+| edition | string | `"community"` |  |
+| image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9"` |  |
+| image.tag | string | `"9.9.0-community"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.pullSecret | string | `"private-registry"` |  |
+| image.pullSecrets[0].name | string | `"private-registry"` |  |
 | securityContext.fsGroup | int | `1000` |  |
+| securityContext.runAsUser | int | `1000` |  |
 | containerSecurityContext.runAsUser | int | `1000` |  |
 | containerSecurityContext.runAsGroup | int | `1000` |  |
 | containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
@@ -56,11 +61,18 @@ helm install sonarqube chart/
 | service.internalPort | int | `9000` |  |
 | service.labels | string | `nil` |  |
 | service.annotations | object | `{}` |  |
+| networkPolicy.enabled | bool | `false` |  |
+| networkPolicy.prometheusNamespace | string | `"monitoring"` |  |
+| nginx.enabled | bool | `false` |  |
 | ingress.enabled | bool | `false` |  |
 | ingress.hosts[0].name | string | `"sonarqube.your-org.com"` |  |
 | ingress.hosts[0].path | string | `"/"` |  |
-| ingress.annotations | object | `{}` |  |
+| ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"64m"` |  |
 | ingress.tls | list | `[]` |  |
+| route.enabled | bool | `false` |  |
+| route.host | string | `""` |  |
+| route.tls.termination | string | `"edge"` |  |
+| route.annotations | object | `{}` |  |
 | affinity | object | `{}` |  |
 | tolerations | list | `[]` |  |
 | nodeSelector | object | `{}` |  |
@@ -77,13 +89,16 @@ helm install sonarqube chart/
 | startupProbe.periodSeconds | int | `10` |  |
 | startupProbe.failureThreshold | int | `24` |  |
 | startupProbe.sonarWebContext | string | `"/"` |  |
+| initContainers.image | string | `"registry1.dso.mil/ironbank/big-bang/base:2.0.0"` |  |
 | initContainers.resources.limits.memory | string | `"300Mi"` |  |
 | initContainers.resources.limits.cpu | string | `"50m"` |  |
 | initContainers.resources.requests.memory | string | `"300Mi"` |  |
 | initContainers.resources.requests.cpu | string | `"50m"` |  |
 | initContainers.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | extraInitContainers | object | `{}` |  |
+| extraContainers | list | `[]` |  |
 | waitForDb.image | string | `"registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.13"` |  |
+| caCerts.enabled | bool | `false` |  |
 | initSysctl.enabled | bool | `false` |  |
 | initSysctl.vmMaxMapCount | int | `524288` |  |
 | initSysctl.fsFileMax | int | `131072` |  |
@@ -91,12 +106,11 @@ helm install sonarqube chart/
 | initSysctl.nproc | int | `8192` |  |
 | initSysctl.securityContext.privileged | bool | `true` |  |
 | initSysctl.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| initFs.enabeld | bool | `false` |  |
+| initFs.enabled | bool | `false` |  |
 | initFs.securityContext.privileged | bool | `true` |  |
 | prometheusExporter.enabled | bool | `false` |  |
 | plugins.install | list | `[]` |  |
-| plugins.lib | list | `[]` |  |
-| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube:8.9.10-community"` |  |
+| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.0-community"` |  |
 | plugins.noCheckCertificate | bool | `false` |  |
 | plugins.securityContext.runAsUser | int | `1000` |  |
 | plugins.securityContext.runAsGroup | int | `1000` |  |
@@ -123,7 +137,9 @@ helm install sonarqube chart/
 | sonarProperties."sonar.ce.javaAdditionalOpts" | string | `"-Dcom.redhat.fips=false"` |  |
 | sonarProperties."sonar.search.javaAdditionalOpts" | string | `"-Dcom.redhat.fips=false"` |  |
 | sonarProperties."sonar.web.javaAdditionalOpts" | string | `"-Dcom.redhat.fips=false"` |  |
-| jdbcDatabaseType | string | `"postgresql"` |  |
+| jdbcOverwrite.enable | bool | `false` |  |
+| jdbcOverwrite.jdbcUsername | string | `"sonarUser"` |  |
+| jdbcOverwrite.jdbcPassword | string | `"sonarPass"` |  |
 | postgresql.enabled | bool | `true` |  |
 | postgresql.postgresqlUsername | string | `"sonarUser"` |  |
 | postgresql.postgresqlPassword | string | `"sonarPass"` |  |
@@ -150,13 +166,13 @@ helm install sonarqube chart/
 | postgresql.securityContext.runAsUser | int | `26` |  |
 | postgresql.securityContext.runAsGroup | int | `26` |  |
 | postgresql.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| postgresql.volumePermissions.enabled | bool | `false` |  |
-| postgresql.volumePermissions.securityContext.runAsUser | int | `0` |  |
-| postgresql.shmVolume.chmod.enabled | bool | `false` |  |
-| postgresql.serviceAccount.enabled | bool | `false` |  |
 | podLabels | object | `{}` |  |
 | sonarqubeFolder | string | `"/opt/sonarqube"` |  |
+| tests.image | string | `"bitnami/minideb-extras"` |  |
 | tests.enabled | bool | `false` |  |
+| tests.resources | object | `{}` |  |
+| tests.initContainers.image | string | `"bats/bats:1.2.1"` |  |
+| tests.initContainers.resources | object | `{}` |  |
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | extraConfig.secrets | list | `[]` |  |
