@@ -21,4 +21,3 @@
 *.tmproj
 # OWNERS file for Kubernetes
 OWNERS
-values-sq.yaml
