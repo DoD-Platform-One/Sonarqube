@@ -2,7 +2,7 @@ apiVersion: v2
 name: sonarqube
 description: SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 type: application
-version: 8.0.0-bb.0
+version: 8.0.0-bb.1
 appVersion: 9.9.0
 keywords:
   - coverage
@@ -50,7 +50,7 @@ annotations:
       image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
     - name: postgresql12
       condition: postgresql.enabled
-      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.13
+      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.14
 dependencies:
 - name: postgresql
   version: 8.6.4

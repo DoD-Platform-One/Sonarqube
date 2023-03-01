@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.0-bb.0](https://img.shields.io/badge/Version-8.0.0--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.0](https://img.shields.io/badge/AppVersion-9.9.0-informational?style=flat-square)
+![Version: 8.0.0-bb.1](https://img.shields.io/badge/Version-8.0.0--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.0](https://img.shields.io/badge/AppVersion-9.9.0-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -97,7 +97,7 @@ helm install sonarqube chart/
 | initContainers.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | extraInitContainers | object | `{}` |  |
 | extraContainers | list | `[]` |  |
-| waitForDb.image | string | `"registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.13"` |  |
+| waitForDb.image | string | `"registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.14"` |  |
 | caCerts.enabled | bool | `false` |  |
 | initSysctl.enabled | bool | `false` |  |
 | initSysctl.vmMaxMapCount | int | `524288` |  |
@@ -151,7 +151,7 @@ helm install sonarqube chart/
 | postgresql.resources.requests.memory | string | `"200Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
 | postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql12"` |  |
-| postgresql.image.tag | string | `"12.13"` |  |
+| postgresql.image.tag | string | `"12.14"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.postgresqlConfiguration.listen_addresses | string | `"*"` |  |
 | postgresql.pgHbaConfiguration | string | `"local all all md5\nhost all all all md5"` |  |
