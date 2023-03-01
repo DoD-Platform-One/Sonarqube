@@ -3,14 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [8.0.0-bb.0] - 2022-02-07
+## [8.0.0-bb.1] - 2023-02-27
 ### Changed
-- Chart version `8.0.0` sonarqube version `9.9.0` updootes.
-## [1.0.31-bb.5] - 2022-01-25
+- upgraded postgresql dependency to `12.14`
+
+## [8.0.0-bb.0] - 2023-02-07
+### Changed
+- Chart version `8.0.0` sonarqube version `9.9.0` updates.
+
+## [1.0.31-bb.5] - 2023-01-25
 ### Changed
 - Cleaned up servicemonitor and networkpolicies
 
-## [1.0.31-bb.4] - 2022-01-17
+## [1.0.31-bb.4] - 2023-01-17
 ### Changed
 - Update gluon to new registry1 location + latest version (0.3.2)
 

@@ -222,7 +222,7 @@ extraInitContainers: {}
 extraContainers: []
 
 waitForDb:
-  image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.13
+  image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.14
 
 ## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
 ## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
@@ -462,7 +462,7 @@ postgresql:
   image:
     registry: registry1.dso.mil
     repository: ironbank/opensource/postgres/postgresql12
-    tag: "12.13"
+    tag: "12.14"
     pullSecrets:
       - private-registry
   postgresqlConfiguration: {"listen_addresses": "*"}
