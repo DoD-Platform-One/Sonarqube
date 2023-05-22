@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.1-bb.0] - 2023-05-17
+### Changed
+- Update release to sonarqube-8.0.1-sonarqube-dce-7.0.1
+- sonarqube from 9.9.0-community to 9.9.1-community
+- postgres-exporter from 0.11.1 to 0.12.0
+- postgresql12 from 12.14 to 12.15
+
 ## [8.0.0-bb.1] - 2023-02-27
 ### Changed
 - upgraded postgresql dependency to `12.14`

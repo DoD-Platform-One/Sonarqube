@@ -27,7 +27,7 @@ edition: "community"
 
 image:
   repository: registry1.dso.mil/ironbank/big-bang/sonarqube-9
-  tag: 9.9.0-community
+  tag: 9.9.1-community
   pullPolicy: IfNotPresent
   # If using a private repository, the imagePullSecrets to use
   pullSecrets:
@@ -222,7 +222,7 @@ extraInitContainers: {}
 extraContainers: []
 
 waitForDb:
-  image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.14
+  image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.15
 
 ## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
 ## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
@@ -299,7 +299,7 @@ plugins:
   # httpsProxy: ""
   # noProxy: ""
 
-  image: registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.0-community
+  image: registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.1-community
   # resources: {}
 
   # .netrc secret file with a key "netrc" to use basic auth while downloading plugins
@@ -462,7 +462,7 @@ postgresql:
   image:
     registry: registry1.dso.mil
     repository: ironbank/opensource/postgres/postgresql12
-    tag: "12.14"
+    tag: "12.15"
     pullSecrets:
       - private-registry
   postgresqlConfiguration: {"listen_addresses": "*"}
