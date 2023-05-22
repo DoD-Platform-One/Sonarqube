@@ -6,15 +6,18 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 describe('Basic Sonarqube', function() {
   it('Check Sonarqube is accessible', function() {
     cy.visit(Cypress.env('url'))
-    
+
     cy.wait(2000)
     cy.get("body").then($body => {
       if ($body.find('h1[class="maintenance-title"]').length > 0) {
         cy.visit(Cypress.env('url_setup'))
         cy.get('button[id="start-migration"]').click()
         cy.wait(2000)
-        cy.title().should('include', 'SonarQube Is Starting')
-      } 
+        cy.contains('Database is up-to-date')
+        cy.wait(2000)
+        cy.contains('SonarQube is starting')
+        cy.wait(10000)
+      }
     })
 
     cy.get('input[name="login"]').type(Cypress.env('user'))
