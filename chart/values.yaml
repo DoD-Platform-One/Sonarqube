@@ -477,6 +477,9 @@ postgresql:
     mountPath: /var/lib/postgresql
   postgresqlDataDir: /var/lib/postgresql/data
 
+  volumePermissions:
+    enabled: false
+
   securityContext:
     # For standard Kubernetes deployment, set enabled=true
     # If using OpenShift, enabled=false for restricted SCC and enabled=true for anyuid/nonroot SCC
