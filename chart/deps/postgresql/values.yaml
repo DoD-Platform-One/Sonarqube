@@ -77,7 +77,6 @@ volumePermissions:
   ##
   securityContext:
     runAsUser: 0
-
 ## Use an alternate scheduler, e.g. "stork".
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
@@ -90,8 +89,8 @@ volumePermissions:
 securityContext:
   enabled: true
   fsGroup: 26
-  runAsUser: 26
-  runAsGroup: 26
+  runAsUser: 1001
+  runAsGroup: 1001
 
 ## Pod Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
