@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.1-bb.2](https://img.shields.io/badge/Version-8.0.1--bb.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.1](https://img.shields.io/badge/AppVersion-9.9.1-informational?style=flat-square)
+![Version: 8.0.1-bb.3](https://img.shields.io/badge/Version-8.0.1--bb.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.1](https://img.shields.io/badge/AppVersion-9.9.1-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -200,6 +200,7 @@ helm install sonarqube chart/
 | bbtests.cypress.envs.cypress_url_setup | string | `"http://sonarqube-sonarqube:9000/setup"` |  |
 | bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
 | bbtests.cypress.envs.cypress_password | string | `"new_admin_password"` |  |
+| bbtests.cypress.envs.cypress_waittime | string | `"10000"` |  |
 
 ## Contributing
 
