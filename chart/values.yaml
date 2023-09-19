@@ -37,6 +37,7 @@ image:
 securityContext:
   fsGroup: 1000
   runAsUser: 1000
+  runAsGroup: 1000
 
 # Set security context for sonarqube container
 containerSecurityContext:
