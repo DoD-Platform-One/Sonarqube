@@ -1,8 +1,0 @@
-{
-  "pluginsFile": false,
-  "supportFile": false,
-  "fixturesFolder": false,
-  "defaultCommandTimeout": 20000,
-  "requestTimeout": 10000
-}
-  

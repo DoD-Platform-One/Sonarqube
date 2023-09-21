@@ -2,7 +2,7 @@ apiVersion: v2
 name: sonarqube
 description: SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 type: application
-version: 8.0.1-bb.5
+version: 8.0.1-bb.6
 appVersion: 9.9.1
 keywords:
   - coverage
@@ -51,5 +51,5 @@ dependencies:
   repository: file://./deps/postgresql
   condition: postgresql.enabled
 - name: gluon
-  version: "0.3.2"
+  version: "0.4.1"
   repository: "oci://registry1.dso.mil/bigbang"
