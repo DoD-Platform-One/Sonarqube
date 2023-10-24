@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.2-bb.0](https://img.shields.io/badge/Version-8.0.2--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.2](https://img.shields.io/badge/AppVersion-9.9.2-informational?style=flat-square)
+![Version: 8.0.2-bb.1](https://img.shields.io/badge/Version-8.0.2--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.2](https://img.shields.io/badge/AppVersion-9.9.2-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -163,6 +163,8 @@ helm install sonarqube chart/
 | postgresql.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
 | postgresql.postgresqlDataDir | string | `"/var/lib/postgresql/data"` |  |
 | postgresql.volumePermissions.enabled | bool | `false` |  |
+| postgresql.serviceAccount.enabled | bool | `true` |  |
+| postgresql.serviceAccount.automountServiceAccountToken | bool | `false` |  |
 | postgresql.securityContext.enabled | bool | `true` |  |
 | postgresql.securityContext.fsGroup | int | `26` |  |
 | postgresql.securityContext.runAsUser | int | `26` |  |
@@ -173,9 +175,8 @@ helm install sonarqube chart/
 | tests.image | string | `"bitnami/minideb-extras"` |  |
 | tests.enabled | bool | `false` |  |
 | tests.resources | object | `{}` |  |
-| tests.initContainers.image | string | `"bats/bats:1.2.1"` |  |
-| tests.initContainers.resources | object | `{}` |  |
-| serviceAccount.create | bool | `false` |  |
+| serviceAccount.create | bool | `true` |  |
+| serviceAccount.automountToken | bool | `false` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | extraConfig.secrets | list | `[]` |  |
 | extraConfig.configmaps | list | `[]` |  |
