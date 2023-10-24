@@ -131,3 +131,5 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 - add fips options
 - added bbtests values to support cypress/script tests
 - drop all's
+- enable serviceaccount creation
+- set automountToken to false to maintain security posture
