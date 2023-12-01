@@ -2,8 +2,8 @@ apiVersion: v2
 name: sonarqube
 description: SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 type: application
-version: 8.0.2-bb.3
-appVersion: 9.9.2
+version: 8.0.3-bb.0
+appVersion: 9.9.3
 keywords:
   - coverage
   - security
@@ -29,21 +29,19 @@ annotations:
     - name: Chart Source
       url: https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube
   artifacthub.io/changes: |
-    - kind: fixed
-      description: "Fix missing `bitnami/minideb-extras` image during helm tests"
     - kind: changed
-      description: "Update SonarQube to 9.9.2"
+      description: "Update SonarQube to 9.9.3"
   artifacthub.io/containsSecurityUpdates: "false"
   bigbang.dev/applicationVersions: |
-    - Sonarqube: 9.9.2-community
+    - Sonarqube: 9.9.3-community
   artifacthub.io/images: |
     - name: sonarqube
-      image: sonarqube:9.9.2-community
+      image: sonarqube:9.9.3-community
   helm.sh/images: |
     - name: sonarqube
-      image: registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.2-community
+      image: registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.3-community
     - name: base
-      image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
+      image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
     - name: postgresql12
       condition: postgresql.enabled
       image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.16
@@ -53,5 +51,5 @@ dependencies:
   repository: file://./deps/postgresql
   condition: postgresql.enabled
 - name: gluon
-  version: "0.4.1"
+  version: "0.4.4"
   repository: "oci://registry1.dso.mil/bigbang"

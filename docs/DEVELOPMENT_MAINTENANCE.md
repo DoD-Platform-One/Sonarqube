@@ -35,7 +35,7 @@ clusterAuditor:
 gatekeeper:
   enabled: false
 
-istiooperator:
+istioOperator:
   enabled: true
 
 istio:
@@ -47,10 +47,10 @@ jaeger:
 kiali:
   enabled: false
 
-logging:
+elasticsearchKibana:
   enabled: false
 
-eckoperator:
+eckOperator:
   enabled: false
 
 fluentbit:
