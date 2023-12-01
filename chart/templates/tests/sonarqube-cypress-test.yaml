@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/part-of: sonarqube
 {{- end }}
 ---
-{{- include "gluon.tests.cypress-runner.overrides" (list . "sonarqube-test.cypress-runner") -}}
+{{ include "gluon.tests.cypress-runner.overrides" (list . "sonarqube-test.cypress-runner") -}}
 {{- define "sonarqube-test.cypress-runner" -}}
 metadata:
   labels:

@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.2-bb.3](https://img.shields.io/badge/Version-8.0.2--bb.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.2](https://img.shields.io/badge/AppVersion-9.9.2-informational?style=flat-square)
+![Version: 8.0.3-bb.0](https://img.shields.io/badge/Version-8.0.3--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.3](https://img.shields.io/badge/AppVersion-9.9.3-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -45,7 +45,7 @@ helm install sonarqube chart/
 | OpenShift.createSCC | bool | `true` |  |
 | edition | string | `"community"` |  |
 | image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9"` |  |
-| image.tag | string | `"9.9.2-community"` |  |
+| image.tag | string | `"9.9.3-community"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.pullSecrets[0].name | string | `"private-registry"` |  |
 | securityContext.fsGroup | int | `1000` |  |
@@ -90,7 +90,7 @@ helm install sonarqube chart/
 | startupProbe.periodSeconds | int | `10` |  |
 | startupProbe.failureThreshold | int | `24` |  |
 | startupProbe.sonarWebContext | string | `"/"` |  |
-| initContainers.image | string | `"registry1.dso.mil/ironbank/big-bang/base:2.0.0"` |  |
+| initContainers.image | string | `"registry1.dso.mil/ironbank/big-bang/base:2.1.0"` |  |
 | initContainers.resources.limits.memory | string | `"300Mi"` |  |
 | initContainers.resources.limits.cpu | string | `"50m"` |  |
 | initContainers.resources.requests.memory | string | `"300Mi"` |  |
@@ -111,7 +111,7 @@ helm install sonarqube chart/
 | initFs.securityContext.privileged | bool | `true` |  |
 | prometheusExporter.enabled | bool | `false` |  |
 | plugins.install | list | `[]` |  |
-| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.2-community"` |  |
+| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.3-community"` |  |
 | plugins.noCheckCertificate | bool | `false` |  |
 | plugins.securityContext.runAsUser | int | `1000` |  |
 | plugins.securityContext.runAsGroup | int | `1000` |  |
