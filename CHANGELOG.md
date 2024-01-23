@@ -3,6 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.3-bb.1] - 2024-01-16
+### Added
+- Added istio `allow-nothing` policy
+- Added istio `allow-monitoring` policy
+- Added istio `allow-http` policy
+- Added istio `allow-http-envoy` policy
+- Added istio custom policy template
+
 ## [8.0.3-bb.0] - 2023-11-29
 ### Changed
 - Update release to sonarqube-8.0.3-sonarqube-dce-7.0.3

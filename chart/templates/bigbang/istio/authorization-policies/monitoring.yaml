@@ -1,0 +1,17 @@
+{{- if and .Values.istio.enabled .Values.istio.hardened.enabled .Values.istio.hardened.monitoring.enabled -}}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: monitoring-authz-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: sonarqube
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: 
+        - cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter
+{{- end }}
