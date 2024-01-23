@@ -569,6 +569,20 @@ domain: bigbang.dev
 istio:
   # Toggle istio integration
   enabled: false
+  hardened:
+    enabled: false
+    customAuthorizationPolicies: []
+    # - name: "allow-nothing"
+    #   enabled: true
+    #   spec: {}
+    tempo:
+      enabled: true
+      namespaces:
+      - tempo
+      principals:
+      - cluster.local/ns/tempo/sa/tempo-tempo
+    monitoring:
+      enabled: true
   # -- Default argocd peer authentication
   mtls:
     # -- STRICT = Allow only mutual TLS traffic,

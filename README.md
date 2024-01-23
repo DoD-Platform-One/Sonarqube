@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.3-bb.0](https://img.shields.io/badge/Version-8.0.3--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.3](https://img.shields.io/badge/AppVersion-9.9.3-informational?style=flat-square)
+![Version: 8.0.3-bb.1](https://img.shields.io/badge/Version-8.0.3--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.3](https://img.shields.io/badge/AppVersion-9.9.3-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -183,6 +183,12 @@ helm install sonarqube chart/
 | terminationGracePeriodSeconds | int | `60` |  |
 | domain | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` |  |
+| istio.hardened.enabled | bool | `false` |  |
+| istio.hardened.customAuthorizationPolicies | list | `[]` |  |
+| istio.hardened.tempo.enabled | bool | `true` |  |
+| istio.hardened.tempo.namespaces[0] | string | `"tempo"` |  |
+| istio.hardened.tempo.principals[0] | string | `"cluster.local/ns/tempo/sa/tempo-tempo"` |  |
+| istio.hardened.monitoring.enabled | bool | `true` |  |
 | istio.mtls | object | `{"mode":"STRICT"}` | Default argocd peer authentication |
 | istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
 | istio.sonarqube.enabled | bool | `true` |  |
