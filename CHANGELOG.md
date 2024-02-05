@@ -3,6 +3,9 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.3-bb.2] - 2024-02-05
+- Updated postgresql12 image to 12.17
+
 ## [8.0.3-bb.1] - 2024-01-16
 ### Added
 - Added istio `allow-nothing` policy
