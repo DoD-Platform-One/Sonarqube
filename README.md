@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.3-bb.3](https://img.shields.io/badge/Version-8.0.3--bb.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.3](https://img.shields.io/badge/AppVersion-9.9.3-informational?style=flat-square)
+![Version: 8.0.4-bb.0](https://img.shields.io/badge/Version-8.0.4--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.4](https://img.shields.io/badge/AppVersion-9.9.4-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -45,7 +45,7 @@ helm install sonarqube chart/
 | OpenShift.createSCC | bool | `true` |  |
 | edition | string | `"community"` |  |
 | image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9"` |  |
-| image.tag | string | `"9.9.3-community"` |  |
+| image.tag | string | `"9.9.4-community"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.pullSecrets[0].name | string | `"private-registry"` |  |
 | securityContext.fsGroup | int | `1000` |  |
@@ -98,7 +98,7 @@ helm install sonarqube chart/
 | initContainers.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | extraInitContainers | object | `{}` |  |
 | extraContainers | list | `[]` |  |
-| waitForDb.image | string | `"registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.17"` |  |
+| waitForDb.image | string | `"registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.18"` |  |
 | caCerts.enabled | bool | `false` |  |
 | initSysctl.enabled | bool | `false` |  |
 | initSysctl.vmMaxMapCount | int | `524288` |  |
@@ -111,7 +111,7 @@ helm install sonarqube chart/
 | initFs.securityContext.privileged | bool | `true` |  |
 | prometheusExporter.enabled | bool | `false` |  |
 | plugins.install | list | `[]` |  |
-| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.3-community"` |  |
+| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.4-community"` |  |
 | plugins.noCheckCertificate | bool | `false` |  |
 | plugins.securityContext.runAsUser | int | `1000` |  |
 | plugins.securityContext.runAsGroup | int | `1000` |  |
@@ -152,7 +152,7 @@ helm install sonarqube chart/
 | postgresql.resources.requests.memory | string | `"200Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
 | postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql12"` |  |
-| postgresql.image.tag | string | `"12.17"` |  |
+| postgresql.image.tag | string | `"12.18"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
 | postgresql.postgresqlConfiguration.listen_addresses | string | `"*"` |  |
 | postgresql.pgHbaConfiguration | string | `"local all all md5\nhost all all all md5"` |  |
