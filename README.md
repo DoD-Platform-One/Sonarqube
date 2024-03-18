@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.4-bb.0](https://img.shields.io/badge/Version-8.0.4--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.4](https://img.shields.io/badge/AppVersion-9.9.4-informational?style=flat-square)
+![Version: 8.0.4-bb.1](https://img.shields.io/badge/Version-8.0.4--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.4](https://img.shields.io/badge/AppVersion-9.9.4-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -189,6 +189,13 @@ helm install sonarqube chart/
 | istio.hardened.tempo.namespaces[0] | string | `"tempo"` |  |
 | istio.hardened.tempo.principals[0] | string | `"cluster.local/ns/tempo/sa/tempo-tempo"` |  |
 | istio.hardened.monitoring.enabled | bool | `true` |  |
+| istio.hardened.monitoring.namespaces[0] | string | `"monitoring"` |  |
+| istio.hardened.monitoring.principals[0] | string | `"cluster.local/ns/monitoring/sa/monitoring-grafana"` |  |
+| istio.hardened.monitoring.principals[1] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager"` |  |
+| istio.hardened.monitoring.principals[2] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator"` |  |
+| istio.hardened.monitoring.principals[3] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus"` |  |
+| istio.hardened.monitoring.principals[4] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics"` |  |
+| istio.hardened.monitoring.principals[5] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter"` |  |
 | istio.mtls | object | `{"mode":"STRICT"}` | Default argocd peer authentication |
 | istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
 | istio.sonarqube.enabled | bool | `true` |  |
