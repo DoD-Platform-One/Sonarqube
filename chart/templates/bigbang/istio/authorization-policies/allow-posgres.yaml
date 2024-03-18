@@ -2,14 +2,17 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-http-policy
+  name: allow-postgres-intra-namespace
   namespace: {{ .Release.Namespace }}
 spec:
   action: ALLOW
   rules:
+  - from:
+    - source:
+        namespaces: ["{{ .Release.Namespace }}"]
   - to:
     - operation:
         ports: 
-        - "9000"
-        - "9001"
+        - "5432"
 {{- end }}
+
