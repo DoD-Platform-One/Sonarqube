@@ -5,7 +5,7 @@
   "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
   "dependencyDashboardTitle": "Renovate: Upgrade SonarQube Package Dependencies",
   "draftPR": true,
-  "enabledManagers": ["helm-values", "regex"],
+  "enabledManagers": ["helm-values", "regex", "helmv3"],
   "labels": ["sonarqube","Big Bang Add Ons","Package Sustainment","kind::maintenance", "renovate"],
   "ignorePaths": ["**/.gitlab-ci.yml", "chart/requirements.yaml"],
   "separateMajorMinor": "false",
