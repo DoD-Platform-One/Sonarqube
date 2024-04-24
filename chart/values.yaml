@@ -617,6 +617,10 @@ networkPolicies:
     istio: ingressgateway
   egressHttps:
     enabled: true
+  # Additional network policies
+  # ref: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+  additionalPolicies: []
+
 
 bbtests:
   enabled: false
