@@ -68,10 +68,37 @@ addons:
     git:
       tag: null
       branch: "name-of-your-development-branch"
-
+    values:  
+      monitoring:
+        enabled: true
+      prometheusExporter:
+        enabled: true
+        version: "0.20.0"
+        webBeanPort: 8000
+        ceBeanPort: 8001
+        config:
+          rules:
+            - pattern: ".*"
+        image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.20.0    
+      monitoringPasscode: "define_it" # set this password to your instance admin password used for the UI
+      networkPolicy:
+        enabled: false # additional network policies may be needed if set to "true"
+        prometheusNamespace: "monitoring"
+      service:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: ""
+          prometheus.io/path: "/metrics"  
+      istio:
+        enabled: true
+        hardened:
+          enabled: true
+          monitoring:
+            enabled: true 
 ```
 
-1. Navigate to the Prometheus target page (https://prometheus.bigbang.dev/targets) and validate that the Sonarqube target shows as up.
+1. Navigate to the Prometheus target page (https://prometheus.dev.bigbang.mil/targets) and validate that the Sonarqube target shows as up. 
+   - If the prometheus targets are not showing then follow this document on setting up the prometheus exporter and podmonitor [Prometheus.md](Prometheus.md)
 
 # Modifications made to upstream chart
 This is a high-level list of modifications that Big Bang has made to the upstream helm chart. You can use this as as cross-check to make sure that no modifications were lost during an upgrade process.

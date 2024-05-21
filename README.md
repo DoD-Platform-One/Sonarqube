@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.4-bb.4](https://img.shields.io/badge/Version-8.0.4--bb.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.4](https://img.shields.io/badge/AppVersion-9.9.4-informational?style=flat-square)
+![Version: 8.0.4-bb.5](https://img.shields.io/badge/Version-8.0.4--bb.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.4](https://img.shields.io/badge/AppVersion-9.9.4-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -110,6 +110,11 @@ helm install sonarqube chart/
 | initFs.enabled | bool | `false` |  |
 | initFs.securityContext.privileged | bool | `true` |  |
 | prometheusExporter.enabled | bool | `false` |  |
+| prometheusExporter.version | string | `"0.20.0"` |  |
+| prometheusExporter.webBeanPort | int | `8000` |  |
+| prometheusExporter.ceBeanPort | int | `8001` |  |
+| prometheusExporter.config.rules[0].pattern | string | `".*"` |  |
+| prometheusExporter.image | string | `"registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.20.0"` |  |
 | plugins.install | list | `[]` |  |
 | plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.4-community"` |  |
 | plugins.noCheckCertificate | bool | `false` |  |
