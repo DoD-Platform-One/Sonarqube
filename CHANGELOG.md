@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.4-bb.5] - 2024-05-16
+### Changed
+- Update documentation development_maintenance.md for prometheus exporter 
+- Updated documentation Prometheus.md with prometheus exporter and podmonitor
+- Added the ability to monitor sonarqube pods using prometheus targets
+- Added /templete/bigbang/prometheus-podmonitor.yaml
+- Added istio peerauthentication policy `peer-authentication-podmonitor`
+- Updated istio `allow-http-envoy` policy to allow podmonitor ports (8000, 8001) 
+
 ## [8.0.4-bb.4] - 2024-04-29
 ### Added
 - Added istio egress whitelist functionality

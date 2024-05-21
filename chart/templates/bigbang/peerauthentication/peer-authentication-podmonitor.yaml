@@ -1,0 +1,18 @@
+{{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") (eq .Values.istio.mtls.mode "STRICT") .Values.monitoring.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: sonarqube-podmonitor-exception
+  namespace: {{ .Release.Namespace }}
+spec:
+  mtls:
+    mode: {{ .Values.istio.mtls.mode }}
+  selector:
+    matchLabels:
+      app: sonarqube
+  portLevelMtls:
+    "8000":
+      mode: PERMISSIVE
+    "8001":
+      mode: PERMISSIVE
+{{- end }} 

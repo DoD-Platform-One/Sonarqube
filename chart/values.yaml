@@ -258,24 +258,24 @@ initFs:
 prometheusExporter:
   enabled: false
   # jmx_prometheus_javaagent version to download from Maven Central
-   #version: "0.16.0"
+  version: "0.20.0"
   # Alternative full download URL for the jmx_prometheus_javaagent.jar (overrides prometheusExporter.version)
   # downloadURL: ""
   # if you need to ignore TLS certificates for whatever reason enable the following flag
   #noCheckCertificate: false
 
   # Ports for the jmx prometheus agent to export metrics at
-  # webBeanPort: 8000
-  # ceBeanPort: 8001
+  webBeanPort: 8000
+  ceBeanPort: 8001
 
-  # config:
-  #   rules:
-  #     - pattern: ".*"
+  config:
+    rules:
+      - pattern: ".*"
   # Overrides config for the CE process Prometheus exporter (by default, the same rules are used for both the Web and CE processes).
   # ceConfig:
   #   rules:
   #     - pattern: ".*"
-  # image: curlimages/curl:7.76.1
+  image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.20.0 
   # For use behind a corporate proxy when downloading prometheus
   # httpProxy: ""
   # httpsProxy: ""
