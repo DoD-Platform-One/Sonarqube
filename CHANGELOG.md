@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.4-bb.6] - 2024-05-21
+### Changed
+- Update securityContext for sonarqube StatefulSets 
+
 ## [8.0.4-bb.5] - 2024-05-16
 ### Changed
 - Update documentation development_maintenance.md for prometheus exporter 
