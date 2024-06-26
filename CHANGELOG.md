@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.5-bb.0] - 2024-06-18
+### Changed
+- Update gluon 0.4.9 -> 0.5.0
+- Update registry1.dso.mil/ironbank/big-bang/sonarqube-9 9.9.4-community -> 9.9.5-community
+- Update registry1.dso.mil/ironbank/opensource/postgres/postgresql12 12.18 -> 12.19
 
 ## [8.0.4-bb.6] - 2024-05-21
 
