@@ -5,12 +5,14 @@
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
 ## Upstream References
+
 * <https://www.sonarqube.org/>
 
 * <https://github.com/SonarSource/docker-sonarqube>
 * <https://github.com/SonarSource/sonarqube>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -24,12 +26,13 @@ Kubernetes: `>= 1.19.0-0`
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install sonarqube chart/
 ```
