@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.5-bb.1](https://img.shields.io/badge/Version-8.0.5--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.5](https://img.shields.io/badge/AppVersion-9.9.5-informational?style=flat-square)
+![Version: 8.0.5-bb.2](https://img.shields.io/badge/Version-8.0.5--bb.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.5](https://img.shields.io/badge/AppVersion-9.9.5-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -43,6 +43,24 @@ helm install sonarqube chart/
 | deploymentStrategy | object | `{}` |  |
 | OpenShift.enabled | bool | `false` |  |
 | OpenShift.createSCC | bool | `true` |  |
+| sso.enabled | bool | `false` |  |
+| sso.name | string | `""` |  |
+| sso.applicationid | string | `""` |  |
+| sso.providerid | string | `""` |  |
+| sso.loginUrl | string | `""` |  |
+| sso.secured | string | `""` |  |
+| sso.serverBaseURL | string | `""` |  |
+| sso.idpmetadataurl | string | `""` |  |
+| sso.image | string | `""` |  |
+| sso.resources.limits.cpu | string | `"100m"` |  |
+| sso.resources.limits.memory | string | `"256Mi"` |  |
+| sso.resources.requests.cpu | string | `"100m"` |  |
+| sso.resources.requests.memory | string | `"256Mi"` |  |
+| sso.containerSecurityContext.enabled | bool | `true` |  |
+| sso.containerSecurityContext.fsGroup | int | `26` |  |
+| sso.containerSecurityContext.runAsUser | int | `26` |  |
+| sso.containerSecurityContext.runAsGroup | int | `26` |  |
+| sso.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | edition | string | `"community"` |  |
 | image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9"` |  |
 | image.tag | string | `"9.9.5-community"` |  |
@@ -186,7 +204,7 @@ helm install sonarqube chart/
 | extraConfig.secrets | list | `[]` |  |
 | extraConfig.configmaps | list | `[]` |  |
 | terminationGracePeriodSeconds | int | `60` |  |
-| domain | string | `"bigbang.dev"` |  |
+| domain | string | `"dev.bigbang.mil"` |  |
 | istio.enabled | bool | `false` |  |
 | istio.hardened.enabled | bool | `false` |  |
 | istio.hardened.customAuthorizationPolicies | list | `[]` |  |

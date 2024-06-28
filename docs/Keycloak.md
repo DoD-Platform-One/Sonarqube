@@ -1,5 +1,19 @@
 # SAML Keycloak integration for Sonarqube
 [Upstream Sonarqube Docs](https://docs.sonarqube.org/latest/instance-administration/delegated-auth/#header-4)
+
+## Resources to setup keycloak-dev on a dev-cluster
+1. You will need a K8s development environment with two Gateway resources configured. One for passthrough and the other for public. Use the k3d-dev.sh script with the -a flag to deploy a dev cluster with MetalLB.
+2. Add this values file to your overrides [keycloak-dev-values](https://repo1.dso.mil/big-bang/bigbang/-/blob/master/docs/assets/configs/example/keycloak-dev-values.yaml?ref_type=heads)
+3. Example dev-cluster deployment
+```
+helm upgrade -i bigbang ./bigbang/chart -n bigbang --create-namespace -f ./overrides/policy-overrides-k3d.yaml \
+    -f ./overrides/registry-values.yaml \
+    -f ./bigbang/chart/ingress-certs.yaml \
+    -f ./overrides/sonarqube/sonarqube-dev-values.yaml \
+    -f ./overrides/keycloak-dev-values.yaml
+```    
+
+
 ## In the Keycloak server, create a new SAML client
 Create a new client
 
@@ -56,7 +70,7 @@ In the login form, the new button "Log in with SAML" allows users to connect wit
 
 ## Helm Values Config example:
 
-Within BigBang:
+### Within BigBang:
 ```yaml
 addons:
   sonarqube:
@@ -81,7 +95,58 @@ addons:
       group: group
 ```
 
-Within Sonarqube package:
+### Within BigBang using API method
+#### If your using the plateform1 keycloak you can use the values below
+#### If your working with keycloak-dev
+1. Login to the Keycloak admin console: (admin/password) https://keycloak.dev.bigbang.mil/auth/admin/master/console/
+2. Switch to the baby-yoda realm.
+3. Create a new user. Be sure to do the following: Switch "Email verified" to "Yes", join the "Impact Level 2 Authorized" group, remove all "Required user actions" (do this after the user is created), create a password (disable "Temporary").
+4. Login to Gitlab using SSO and the user you just configured.
+5. Setup MFA.
+- Reminder: Change the below values to point to your instance of keycloak-dev
+
+```yaml
+addons:
+  sonarqube:
+    enabled: true
+    values:  
+      monitoring:
+        enabled: true
+      # Curl command to set SAML config uses the "currentAdminPassword:"
+      account:
+        adminPassword: "admin"
+        currentAdminPassword: "admin"
+      domain: "dev.bigbang.mil"          
+      # Enable/disable Keycloak SSO integration
+      sso:
+        enabled: true
+        name: "P1 SSO"
+        # platform1 client_id = https://repo1.dso.mil/big-bang/bigbang/-/blame/master/docs/assets/configs/example/dev-sso-values.yaml?ref_type=heads#L225
+        # baby-yoda.json = https://repo1.dso.mil/big-bang/product/packages/keycloak/-/blame/main/chart/resources/dev/baby-yoda.json#L320
+        applicationid: "platform1_#######"
+        serverBaseURL: "https://sonarqube.dev.bigbang.mil"
+        # BaseURL for keycloak.dev.bigbang.mil for your own keycloak
+        idpmetadataurl: "https://login.dso.mil/auth/realms/baby-yoda/protocol/saml/descriptor"
+        image: "registry1.dso.mil/ironbank/big-bang/base:2.1.0"
+        # securitycontext needed to pass Kyverno policies
+        containerSecurityContext:
+          enabled: true
+          fsGroup: 26
+          runAsUser: 26
+          runAsGroup: 26
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+```            
+
+### Within Sonarqube package:
 ```yaml
 sonarProperties:
   sonar.forceAuthentication: true

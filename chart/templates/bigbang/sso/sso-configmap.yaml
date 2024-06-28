@@ -1,0 +1,26 @@
+{{- if .Values.sso.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sonarqube-sso-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: sso-config
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: sonarqube
+    app.kubernetes.io/component: sso
+data:
+  sonar.properties: |-
+    sonar.auth.saml.applicationId: {{ .Values.sso.applicationid | nindent 4 }}
+    sonar.auth.saml.providerName: {{ .Values.sso.name | default "keycloak" | nindent 4 }}
+    sonar.auth.saml.providerId: {{ .Values.sso.providerid | nindent 4 }}
+    sonar.auth.saml.loginUrl: {{ .Values.sso.loginUrl | nindent 4 }}
+    sonar.auth.saml.certificate.secured: {{ .Values.sso.secured | nindent 4 }}
+    sonar.auth.saml.user.name: {{ .Values.sso.mapname | default "name" | nindent 4 }}
+    sonar.auth.saml.user.login: {{ .Values.sso.maplogin | default "login" | nindent 4 }}
+    sonar.auth.saml.user.email: {{ .Values.sso.mapemail | default "email" | nindent 4 }}
+    sonar.auth.saml.group.name: {{ .Values.sso.mapgroup | default "group" | nindent 4}}
+    sonar.core.serverBaseURL: {{ .Values.sso.serverBaseURL | default "https://sonarqube.dev.bigbang.mil" | nindent 4 }}
+    idpmetadataurl: {{ .Values.sso.idpMetadataUrl | default "https://login.dso.mil/auth/realms/baby-yoda/protocol/saml/descriptor" | nindent 4 }}
+{{- end }}
