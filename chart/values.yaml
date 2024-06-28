@@ -23,8 +23,55 @@ OpenShift:
   enabled: false
   createSCC: true
 
-edition: "community"
+# Enable/disable Keycloak SSO integration
+sso:
+  enabled: false
+  # name is needed for sso login screen "keycloak" of "P1 SSO"
+  name: ""
+  # The applicationid is the keycloak client id
+  applicationid: ""
+  # The providerid is pulled from the saml config
+  providerid: ""
+  # The loginUrl is pulled from the saml config
+  loginUrl: ""
+  # The loginUrl is pulled from the saml config
+  secured: ""
+  # default = "name", value override
+  # mapname: ""
+  # default = "login", value override
+  # maplogin: ""
+  # default = "email", value override
+  # mapemail: ""
+  # default = "group", value override
+  # mapgroup: ""
+  # serverBaseURL value is needed - ex host = https://sonarqube.dev.bigbang.mil
+  serverBaseURL: ""
+  # idpmetadataurl is needed to pull SAML configureation from keycloak realms
+  idpmetadataurl: ""
+  # image default = "registry1.dso.mil/ironbank/big-bang/base:2.1.0"
+  image: ""
 
+# Configure resource requests and limits in the ./chart/templates/bigbang/sso/configure-sso.yaml job
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+# Configure security context in the ./chart/templates/bigbang/sso/configure-sso.yaml job
+  containerSecurityContext:
+    enabled: true
+    fsGroup: 26
+    runAsUser: 26
+    runAsGroup: 26
+    capabilities:
+      drop:
+        - ALL
+
+edition: "community"
+  
 image:
   repository: registry1.dso.mil/ironbank/big-bang/sonarqube-9
   tag: 9.9.5-community
@@ -45,7 +92,7 @@ containerSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
   capabilities:
-    drop: 
+    drop:
       - ALL
 
 # Settings to configure elasticsearch host requirements
@@ -224,6 +271,7 @@ extraContainers: []
 
 waitForDb:
   image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.19
+
 
 ## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
 ## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
@@ -544,8 +592,8 @@ extraConfig:
 
 # account:
 # The values can be set to define the current and the (new) custom admin passwords at the startup (the username will remain "admin")
-#   adminPassword: admin
-#   currentAdminPassword: admin
+#  adminPassword: admin
+#  currentAdminPassword: admin
 # The above values can be also provided by a secret that contains "password" and "currentPassword" as keys. You can generate such a secret in your cluster
 # using "kubectl create secret generic admin-password-secret-name --from-literal=password=admin --from-literal=currentPassword=admin"
 #   adminPasswordSecretName: ""
@@ -565,7 +613,7 @@ terminationGracePeriodSeconds: 60
 
 # Big Bang Additions
 ## Your FQDN will be ${ .Values.subdomain }.${ .Values.domain }
-domain: bigbang.dev
+domain: dev.bigbang.mil
 istio:
   # Toggle istio integration
   enabled: false
