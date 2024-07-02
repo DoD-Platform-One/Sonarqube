@@ -22,5 +22,5 @@ data:
     sonar.auth.saml.user.email: {{ .Values.sso.mapemail | default "email" | nindent 4 }}
     sonar.auth.saml.group.name: {{ .Values.sso.mapgroup | default "group" | nindent 4}}
     sonar.core.serverBaseURL: {{ .Values.sso.serverBaseURL | default "https://sonarqube.dev.bigbang.mil" | nindent 4 }}
-    idpmetadataurl: {{ .Values.sso.idpMetadataUrl | default "https://login.dso.mil/auth/realms/baby-yoda/protocol/saml/descriptor" | nindent 4 }}
+    idpmetadataurl: {{ .Values.sso.idpmetadataurl | default "https://login.dso.mil/auth/realms/baby-yoda/protocol/saml/descriptor" | nindent 4 }}
 {{- end }}
