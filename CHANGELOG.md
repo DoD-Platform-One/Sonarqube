@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.6-bb.0] - 2024-07-03
+### Changed
+- Update registry1.dso.mil/ironbank/big-bang/sonarqube-9 9.9.5-community -> 9.9.6-community
+
 ## [8.0.5-bb.3] - 2024-07-01
 ### Fixed
 - Resolved issue with sso helm template matching up with values.yaml file.

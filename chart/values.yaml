@@ -74,7 +74,7 @@ edition: "community"
   
 image:
   repository: registry1.dso.mil/ironbank/big-bang/sonarqube-9
-  tag: 9.9.5-community
+  tag: 9.9.6-community
   pullPolicy: IfNotPresent
   # If using a private repository, the imagePullSecrets to use
   pullSecrets:
@@ -348,7 +348,7 @@ plugins:
   # httpsProxy: ""
   # noProxy: ""
 
-  image: registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.5-community
+  image: registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.6-community
   # resources: {}
 
   # .netrc secret file with a key "netrc" to use basic auth while downloading plugins

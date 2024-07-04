@@ -5,7 +5,7 @@ metadata:
 upstream:
   type: git
   git:
-    commit: a2708f487fe4d118be0bdc0c20dd2f174b5ef708
+    commit: e1724f5b468b89af6811acbeb7673763fee0188b
     repo: https://github.com/SonarSource/helm-chart-sonarqube
     directory: /charts/sonarqube
-    ref: sonarqube-8.0.5-sonarqube-dce-7.0.5
+    ref: sonarqube-8.0.6-sonarqube-dce-7.0.6
