@@ -27,6 +27,9 @@ describe('Basic Sonarqube', function() {
       expect(interception.response.statusCode).to.equal(200)
     })
 
+    //Wait for server to refresh with popup
+    cy.wait(1000)
+
     //Check to see if we end up on the screen asking us to consent and if so perform consnet
     cy.url().then((currentURL) => {
       if (currentURL.includes('plugin_risk_consent')) {
@@ -35,9 +38,13 @@ describe('Basic Sonarqube', function() {
     })
 
     cy.scrollTo('topRight')
+    cy.wait(2000)
     cy.get('a[class="dropdown-toggle navbar-avatar"]').click()
+    cy.wait(2000)
     cy.contains("My Account").click()
+    cy.wait(2000)
     cy.contains("Security").click()
+    cy.wait(2000)
     cy.get('input[placeholder="Enter Token Name"]').type(Math.random().toString(36).substring(8))
     cy.get('#token-select-type').click()
     cy.get('#react-select-2-option-1').click()
