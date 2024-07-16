@@ -40,6 +40,10 @@ istioOperator:
 
 istio:
   enabled: true
+  # Istio hardened will be enabled by default in the future (https://repo1.dso.mil/big-bang/bigbang/-/issues/2037)
+  values:
+    hardened:
+      enabled: true
 
 jaeger:
   enabled: false
@@ -68,7 +72,7 @@ addons:
     git:
       tag: null
       branch: "name-of-your-development-branch"
-    values:  
+    values:
       monitoring:
         enabled: true
       prometheusExporter:
@@ -79,7 +83,7 @@ addons:
         config:
           rules:
             - pattern: ".*"
-        image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.20.0    
+        image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.20.0
       monitoringPasscode: "define_it" # set this password to your instance admin password used for the UI
       networkPolicy:
         enabled: false # additional network policies may be needed if set to "true"
@@ -88,16 +92,16 @@ addons:
         annotations:
           prometheus.io/scrape: "true"
           prometheus.io/port: ""
-          prometheus.io/path: "/metrics"  
+          prometheus.io/path: "/metrics"
       istio:
         enabled: true
         hardened:
           enabled: true
           monitoring:
-            enabled: true 
+            enabled: true
 ```
 
-1. Navigate to the Prometheus target page (https://prometheus.dev.bigbang.mil/targets) and validate that the Sonarqube target shows as up. 
+1. Navigate to the Prometheus target page (https://prometheus.dev.bigbang.mil/targets) and validate that the Sonarqube target shows as up.
    - If the prometheus targets are not showing then follow this document on setting up the prometheus exporter and podmonitor [Prometheus.md](Prometheus.md)
 
 # Modifications made to upstream chart

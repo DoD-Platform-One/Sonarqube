@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.6-bb.2] - 2024-07-16
+### Changed
+- Removed the allow nothing policy
+- Moved the authorization policies
+- Updated the istio hardened doc
+
 ## [8.0.6-bb.1] - 2024-07-09
 ### Changed
 - Added in waits between cypress test calls to avoid having cypress tests lock out and fail with failed response hanging
