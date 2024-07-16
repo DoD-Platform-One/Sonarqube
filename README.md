@@ -1,6 +1,6 @@
 # sonarqube
 
-![Version: 8.0.6-bb.1](https://img.shields.io/badge/Version-8.0.6--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.6](https://img.shields.io/badge/AppVersion-9.9.6-informational?style=flat-square)
+![Version: 8.0.6-bb.2](https://img.shields.io/badge/Version-8.0.6--bb.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.6](https://img.shields.io/badge/AppVersion-9.9.6-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
