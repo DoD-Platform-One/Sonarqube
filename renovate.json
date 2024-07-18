@@ -8,6 +8,7 @@
   "labels": ["sonarqube","Big Bang Add Ons","Package Sustainment","kind::maintenance", "renovate"],
   "ignorePaths": ["**/.gitlab-ci.yml", "chart/requirements.yaml"],
   "separateMajorMinor": "false",
+  "postUpdateOptions": ["helmUpdateSubChartArchives"],
   "commitMessagePrefix": "SKIP UPDATE CHECK",
   "packageRules": [
     {
