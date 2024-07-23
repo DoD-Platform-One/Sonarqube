@@ -10,6 +10,10 @@ SonarQube offers Code Quality and Code Security analysis for up to 27 languages.
 * <https://github.com/SonarSource/docker-sonarqube>
 * <https://github.com/SonarSource/sonarqube>
 
+### Upstream Release Notes
+
+The [upstream sonarqube release notes](https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/CHANGELOG.md) may help when reviewing this package.
+
 ## Learn More
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
