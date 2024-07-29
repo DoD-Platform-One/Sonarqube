@@ -1,13 +1,14 @@
 {
   "baseBranches": ["main"],
   "configWarningReuseIssue": false,
-  "dependencyDashboard": "true",
+  "dependencyDashboard": true,
+  "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
   "dependencyDashboardTitle": "Renovate: Upgrade SonarQube Package Dependencies",
   "draftPR": true,
   "enabledManagers": ["helm-values", "regex", "helmv3"],
-  "labels": ["sonarqube","Big Bang Add Ons","Package Sustainment","kind::maintenance", "renovate"],
+  "labels": ["sonarqube", "Big Bang Add Ons", "Package Sustainment", "kind::maintenance", "renovate"],
   "ignorePaths": ["**/.gitlab-ci.yml", "chart/requirements.yaml"],
-  "separateMajorMinor": "false",
+  "separateMajorMinor": false,
   "postUpdateOptions": ["helmUpdateSubChartArchives"],
   "commitMessagePrefix": "SKIP UPDATE CHECK",
   "packageRules": [
@@ -21,7 +22,7 @@
       "allowedVersions": "!/8.4/"
     },
     {
-      "matchPackageNames": ["ironbank/big-bang/sonarqube","registry1.dso.mil/ironbank/big-bang/sonarqube"],
+      "matchPackageNames": ["ironbank/big-bang/sonarqube-9", "registry1.dso.mil/ironbank/big-bang/sonarqube-9"],
       "separateMajorMinor": true,
       "allowedVersions": "!/9.6.1/"
     }
@@ -32,23 +33,8 @@
       "matchStrings": [
         "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
       ],
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^chart/Chart\\.yaml$"],
-      "matchStrings": [
-        "- Sonarqube:\\s+(?<currentValue>.+)"
-      ],
-      "registryUrlTemplate": "https://registry1.dso.mil",
-      "depNameTemplate": "ironbank/big-bang/sonarqube",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "fileMatch": ["^chart/Chart\\.yaml$"],
-      "matchStrings": [
-        "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
-      ],
-      "datasourceTemplate": "docker"
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/sonarqube-9"
     },
     {
       "fileMatch": ["^chart/Chart\\.yaml$"],
@@ -56,14 +42,31 @@
         "appVersion:\\s+(?<currentValue>.+)"
       ],
       "extractVersionTemplate": "^(?<version>.*)-community$",
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/sonarqube-9"
+    },
+    {
+      "fileMatch": ["^chart/Chart\\.yaml$"],
+      "matchStrings": [
+        "- Sonarqube:\\s+(?<currentValue>.+)"
+      ],
       "registryUrlTemplate": "https://registry1.dso.mil",
-      "depNameTemplate": "ironbank/big-bang/sonarqube",
+      "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/sonarqube-9",
       "datasourceTemplate": "docker"
     },
     {
-      "fileMatch": ["^chart/values\\.yaml$"],
+      "fileMatch": ["^chart/Chart\\.yaml$"],
       "matchStrings": [
-        "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
+        "image: sonarqube:(?<currentValue>.+)"
+      ],
+      "registryUrlTemplate": "https://registry1.dso.mil",
+      "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/sonarqube-9",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": ["^chart/Chart\\.yaml$"],
+      "matchStrings": [
+        "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
       ],
       "datasourceTemplate": "docker"
     },
@@ -81,5 +84,5 @@
       ],
       "datasourceTemplate": "docker"
     }
- ]
+  ]
 }
