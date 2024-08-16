@@ -2,7 +2,7 @@ apiVersion: v2
 name: sonarqube
 description: SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 type: application
-version: 8.0.6-bb.2
+version: 8.0.6-bb.3
 appVersion: 9.9.6
 keywords:
   - coverage
@@ -34,6 +34,9 @@ annotations:
     - kind: changed
       description: "Update SonarQube to 9.9.6"
   artifacthub.io/containsSecurityUpdates: "false"
+  bigbang.dev/upstreamReleaseNotesMarkdown: |
+    - [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-8.0.6-sonarqube-dce-7.0.6/charts/sonarqube-dce/CHANGELOG.md)
+    - [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-8.0.6-sonarqube-dce-7.0.6/charts/sonarqube-dce/README.md)
   bigbang.dev/applicationVersions: |
     - Sonarqube: 9.9.6-community
   artifacthub.io/images: |
