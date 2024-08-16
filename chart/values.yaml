@@ -612,6 +612,12 @@ extraConfig:
 terminationGracePeriodSeconds: 60
 
 # Big Bang Additions
+
+
+## Bigbang security package kyverno will, by default, block images that don't originate from registry1.dso.mil
+# curlContainerImage: curlimages/curl:latest
+curlContainerImage: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"
+
 ## Your FQDN will be ${ .Values.subdomain }.${ .Values.domain }
 domain: dev.bigbang.mil
 istio:

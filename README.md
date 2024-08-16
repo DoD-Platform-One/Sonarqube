@@ -1,6 +1,7 @@
+<!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # sonarqube
 
-![Version: 8.0.6-bb.2](https://img.shields.io/badge/Version-8.0.6--bb.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.6](https://img.shields.io/badge/AppVersion-9.9.6-informational?style=flat-square)
+![Version: 8.0.6-bb.3](https://img.shields.io/badge/Version-8.0.6--bb.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.6](https://img.shields.io/badge/AppVersion-9.9.6-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
@@ -12,7 +13,8 @@ SonarQube offers Code Quality and Code Security analysis for up to 27 languages.
 
 ### Upstream Release Notes
 
-The [upstream sonarqube release notes](https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/CHANGELOG.md) may help when reviewing this package.
+- [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-8.0.6-sonarqube-dce-7.0.6/charts/sonarqube-dce/CHANGELOG.md)
+- [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-8.0.6-sonarqube-dce-7.0.6/charts/sonarqube-dce/README.md)
 
 ## Learn More
 * [Application Overview](docs/overview.md)
@@ -208,6 +210,7 @@ helm install sonarqube chart/
 | extraConfig.secrets | list | `[]` |  |
 | extraConfig.configmaps | list | `[]` |  |
 | terminationGracePeriodSeconds | int | `60` |  |
+| curlContainerImage | string | `"registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"` |  |
 | domain | string | `"dev.bigbang.mil"` |  |
 | istio.enabled | bool | `false` |  |
 | istio.hardened.enabled | bool | `false` |  |
@@ -250,3 +253,8 @@ helm install sonarqube chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
+---
+
+_This file is programatically generated using `helm-docs` and some BigBang-specific templates. The `gluon` repository has [instructions for regenerating package READMEs](https://repo1.dso.mil/big-bang/product/packages/gluon/-/blob/master/docs/bb-package-readme.md)._
+

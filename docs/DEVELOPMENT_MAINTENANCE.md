@@ -25,6 +25,13 @@ The below details the steps required to update to a new version of the Sonarqube
       bigbang.dev/applicationVersions: |
         - Sonarqube: X.X.X
     ```
+1. Update `chart/Chart.yaml` `bigbang.dev/upstreamReleaseNotesMarkdown` to the correct tag links.
+    ```yaml
+    annotations:
+      bigbang.dev/upstreamReleaseNotesMarkdown: |
+        - [Find our upstream chart's CHANGELOG here](https://link-goes-here/CHANGELOG.md)
+        - [and our upstream application release notes here](https://another-link-here/RELEASE_NOTES.md)
+    ```
 1. Update `CHANGELOG.md` adding an entry for the new version and noting all changes.
 1. Generate the `README.md` updates by following the [guide in gluon](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-package-readme.md).
 1. Open an MR in "Draft" status and validate that CI passes. This will perform a number of smoke tests against the package, but it is good to manually deploy to test some things that CI doesn't.
@@ -83,6 +90,7 @@ addons:
       tag: null
       branch: "name-of-your-development-branch"
     values:
+      curlContainerImage: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"
       monitoring:
         enabled: true
       prometheusExporter:
@@ -109,6 +117,18 @@ addons:
           enabled: true
           monitoring:
             enabled: true
+          customServiceEntries:
+            - name: "allow-maven-for-monitoring"
+              enabled: true
+              spec:
+                hosts:
+                  - "repo1.maven.org"
+                location: MESH_EXTERNAL
+                ports:
+                  - number: 443
+                    protocol: TLS
+                    name: https
+                resolution: DNS
 ```
 
 1. Navigate to the Prometheus target page (https://prometheus.dev.bigbang.mil/targets) and validate that the Sonarqube target shows as up.
@@ -117,7 +137,10 @@ addons:
 # Modifications made to upstream chart
 This is a high-level list of modifications that Big Bang has made to the upstream helm chart. You can use this as as cross-check to make sure that no modifications were lost during an upgrade process.
 
-##  chart/charts/*.tgz
+## chart/templates/change-admin-password-hook.yml
+- add if logic to use a correct curl command if using precreated secret for admin `password` and `currentPassword`
+ 
+## chart/charts/*.tgz
 - add the gluon library archive from ```helm dependency update ./chart```
 
 - commit the tar archives that were downloaded from the helm dependency update command. And also commit the requirements.lock that was generated.
@@ -166,6 +189,7 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 - add Kptfile
 
 ## chart/values.yaml
+- curlContainerImage updated to use registry1 hardened curl-capable image
 - Big Bang additions at the bottom of the values file
 - Replace image with Iron Bank image
 - add PullSecret.name = private-registry

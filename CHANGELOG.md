@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.0.6-bb.3] - 2024-08-13
+### Changed
+- Addressed value logic for the admin password change hook job
+- Switched the admin password change hook job image value `curlContainerImage` to hardened registry1 curl capable container
+
 ## [8.0.6-bb.2] - 2024-07-16
 ### Changed
 - Removed the allow nothing policy
