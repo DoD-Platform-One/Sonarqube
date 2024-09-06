@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # sonarqube
 
-![Version: 8.0.6-bb.3](https://img.shields.io/badge/Version-8.0.6--bb.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.6](https://img.shields.io/badge/AppVersion-9.9.6-informational?style=flat-square)
+![Version: 8.0.6-bb.4](https://img.shields.io/badge/Version-8.0.6--bb.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.6](https://img.shields.io/badge/AppVersion-9.9.6-informational?style=flat-square)
 
 SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
 
