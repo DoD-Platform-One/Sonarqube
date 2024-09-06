@@ -33,7 +33,7 @@ spec:
         heritage: {{ .Release.Service | quote }}
         role: slave
 {{- with .Values.slave.podLabels }}
-{{ toYaml . | indent 8 }}
+{{ tpl (toYaml . | nindent 8) $ }}
 {{- end }}
 {{- with .Values.slave.podAnnotations }}
       annotations:

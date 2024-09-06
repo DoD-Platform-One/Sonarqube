@@ -30,7 +30,7 @@ spec:
         app: {{ template "sonarqube.name" . }}
         release: {{ .Release.Name }}
 {{- with .Values.podLabels }}
-{{ toYaml . | indent 8 }}
+{{- tpl (toYaml . | nindent 8) $ }}
 {{- end }}
       annotations:
         checksum/init-sysctl: {{ include (print $.Template.BasePath "/init-sysctl.yaml") . | sha256sum }}
