@@ -1,13 +1,14 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # sonarqube
 
-![Version: 8.0.6-bb.4](https://img.shields.io/badge/Version-8.0.6--bb.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 9.9.6](https://img.shields.io/badge/AppVersion-9.9.6-informational?style=flat-square)
+![Version: 10.6.1-bb.0](https://img.shields.io/badge/Version-10.6.1--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 10.6.0](https://img.shields.io/badge/AppVersion-10.6.0-informational?style=flat-square)
 
-SonarQube offers Code Quality and Code Security analysis for up to 27 languages. Find Bugs, Vulnerabilities, Security Hotspots and Code Smells throughout your workflow.
+SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution, SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects. The tool analyses 30+ different programming languages and integrates into your CI pipeline and DevOps platform to ensure that your code meets high-quality standards.
 
 ## Upstream References
 * <https://www.sonarqube.org/>
 
+* <https://github.com/SonarSource/helm-chart-sonarqube>
 * <https://github.com/SonarSource/docker-sonarqube>
 * <https://github.com/SonarSource/sonarqube>
 
@@ -26,7 +27,7 @@ SonarQube offers Code Quality and Code Security analysis for up to 27 languages.
 * Kubernetes config installed in `~/.kube/config`
 * Helm installed
 
-Kubernetes: `>= 1.19.0-0`
+Kubernetes: `>= 1.24.0-0`
 
 Install Helm
 
@@ -46,6 +47,7 @@ helm install sonarqube chart/
 |-----|------|---------|-------------|
 | deploymentType | string | `"StatefulSet"` |  |
 | replicaCount | int | `1` |  |
+| revisionHistoryLimit | int | `10` |  |
 | deploymentStrategy | object | `{}` |  |
 | OpenShift.enabled | bool | `false` |  |
 | OpenShift.createSCC | bool | `true` |  |
@@ -68,13 +70,15 @@ helm install sonarqube chart/
 | sso.containerSecurityContext.runAsGroup | int | `26` |  |
 | sso.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | edition | string | `"community"` |  |
-| image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9"` |  |
-| image.tag | string | `"9.9.6-community"` |  |
+| image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-10"` |  |
+| image.tag | string | `"10.6.0-{{ .Values.edition }}"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.pullSecrets[0].name | string | `"private-registry"` |  |
 | securityContext.fsGroup | int | `1000` |  |
 | securityContext.runAsUser | int | `1000` |  |
 | securityContext.runAsGroup | int | `1000` |  |
+| containerSecurityContext.allowPrivilegeEscalation | bool | `false` |  |
+| containerSecurityContext.runAsNonRoot | bool | `true` |  |
 | containerSecurityContext.runAsUser | int | `1000` |  |
 | containerSecurityContext.runAsGroup | int | `1000` |  |
 | containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
@@ -88,11 +92,11 @@ helm install sonarqube chart/
 | service.annotations | object | `{}` |  |
 | networkPolicy.enabled | bool | `false` |  |
 | networkPolicy.prometheusNamespace | string | `"monitoring"` |  |
-| nginx.enabled | bool | `false` |  |
+| sonarWebContext | string | `""` |  |
+| ingress-nginx.enabled | bool | `false` |  |
 | ingress.enabled | bool | `false` |  |
 | ingress.hosts[0].name | string | `"sonarqube.your-org.com"` |  |
-| ingress.hosts[0].path | string | `"/"` |  |
-| ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"64m"` |  |
+| ingress.annotations | object | `{}` |  |
 | ingress.tls | list | `[]` |  |
 | route.enabled | bool | `false` |  |
 | route.host | string | `""` |  |
@@ -102,18 +106,24 @@ helm install sonarqube chart/
 | tolerations | list | `[]` |  |
 | nodeSelector | object | `{}` |  |
 | hostAliases | list | `[]` |  |
+| readinessProbe.exec.command[0] | string | `"sh"` |  |
+| readinessProbe.exec.command[1] | string | `"-c"` |  |
+| readinessProbe.exec.command[2] | string | `"#!/bin/bash\n# A Sonarqube container is considered ready if the status is UP, DB_MIGRATION_NEEDED or DB_MIGRATION_RUNNING\n# status about migration are added to prevent the node to be kill while sonarqube is upgrading the database.\nif wget --no-proxy -qO- http://localhost:{{ .Values.service.internalPort }}{{ .Values.readinessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/status \| grep -q -e '\"status\":\"UP\"' -e '\"status\":\"DB_MIGRATION_NEEDED\"' -e '\"status\":\"DB_MIGRATION_RUNNING\"'; then\n  exit 0\nfi\nexit 1\n"` |  |
 | readinessProbe.initialDelaySeconds | int | `60` |  |
 | readinessProbe.periodSeconds | int | `30` |  |
 | readinessProbe.failureThreshold | int | `6` |  |
-| readinessProbe.sonarWebContext | string | `"/"` |  |
+| readinessProbe.timeoutSeconds | int | `1` |  |
+| livenessProbe.exec.command[0] | string | `"sh"` |  |
+| livenessProbe.exec.command[1] | string | `"-c"` |  |
+| livenessProbe.exec.command[2] | string | `"wget --no-proxy --quiet -O /dev/null --timeout={{ .Values.livenessProbe.timeoutSeconds }} --header=\"X-Sonar-Passcode: $SONAR_WEB_SYSTEMPASSCODE\" \"http://localhost:{{ .Values.service.internalPort }}{{ .Values.livenessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/liveness\"\n"` |  |
 | livenessProbe.initialDelaySeconds | int | `60` |  |
 | livenessProbe.periodSeconds | int | `30` |  |
 | livenessProbe.failureThreshold | int | `6` |  |
-| livenessProbe.sonarWebContext | string | `"/"` |  |
+| livenessProbe.timeoutSeconds | int | `1` |  |
 | startupProbe.initialDelaySeconds | int | `30` |  |
 | startupProbe.periodSeconds | int | `10` |  |
 | startupProbe.failureThreshold | int | `24` |  |
-| startupProbe.sonarWebContext | string | `"/"` |  |
+| startupProbe.timeoutSeconds | int | `1` |  |
 | initContainers.image | string | `"registry1.dso.mil/ironbank/big-bang/base:2.1.0"` |  |
 | initContainers.resources.limits.memory | string | `"300Mi"` |  |
 | initContainers.resources.limits.cpu | string | `"50m"` |  |
@@ -131,29 +141,38 @@ helm install sonarqube chart/
 | initSysctl.nproc | int | `8192` |  |
 | initSysctl.securityContext.privileged | bool | `true` |  |
 | initSysctl.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| initSysctl.securityContext.runAsUser | int | `0` |  |
 | initFs.enabled | bool | `false` |  |
-| initFs.securityContext.privileged | bool | `true` |  |
+| initFs.securityContext.privileged | bool | `false` |  |
+| initFs.securityContext.runAsNonRoot | bool | `false` |  |
+| initFs.securityContext.runAsUser | int | `0` |  |
+| initFs.securityContext.runAsGroup | int | `0` |  |
+| initFs.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
+| initFs.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| initFs.securityContext.capabilities.add[0] | string | `"CHOWN"` |  |
 | prometheusExporter.enabled | bool | `false` |  |
-| prometheusExporter.version | string | `"0.20.0"` |  |
+| prometheusExporter.version | string | `"0.17.2"` |  |
 | prometheusExporter.webBeanPort | int | `8000` |  |
 | prometheusExporter.ceBeanPort | int | `8001` |  |
 | prometheusExporter.config.rules[0].pattern | string | `".*"` |  |
-| prometheusExporter.image | string | `"registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.20.0"` |  |
+| prometheusExporter.image | string | `"registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.17.2"` |  |
+| prometheusMonitoring.podMonitor.enabled | bool | `false` |  |
+| prometheusMonitoring.podMonitor.interval | string | `"30s"` |  |
 | plugins.install | list | `[]` |  |
-| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-9:9.9.6-community"` |  |
+| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.6.0-community"` |  |
 | plugins.noCheckCertificate | bool | `false` |  |
-| plugins.securityContext.runAsUser | int | `1000` |  |
-| plugins.securityContext.runAsGroup | int | `1000` |  |
 | jvmOpts | string | `""` |  |
 | jvmCeOpts | string | `""` |  |
 | monitoringPasscode | string | `"define_it"` |  |
 | env[0].name | string | `"JDK_JAVA_OPTIONS"` |  |
 | env[0].value | string | `"-Dcom.redhat.fips=false"` |  |
 | annotations | object | `{}` |  |
-| resources.limits.cpu | string | `"300m"` |  |
-| resources.limits.memory | string | `"2.5Gi"` |  |
-| resources.requests.cpu | string | `"300m"` |  |
-| resources.requests.memory | string | `"2.5Gi"` |  |
+| resources.limits.cpu | string | `"800m"` |  |
+| resources.limits.memory | string | `"6144M"` |  |
+| resources.limits.ephemeral-storage | string | `"512000M"` |  |
+| resources.requests.cpu | string | `"400m"` |  |
+| resources.requests.memory | string | `"2048M"` |  |
+| resources.requests.ephemeral-storage | string | `"1536M"` |  |
 | persistence.enabled | bool | `false` |  |
 | persistence.annotations | object | `{}` |  |
 | persistence.storageClass | string | `nil` |  |
