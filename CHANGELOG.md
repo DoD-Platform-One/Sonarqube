@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [10.6.1-bb.0] - 2024-08-27
+### Changed
+- Update gluon 0.5.0 -> 5.4.0
+- Update sonarqube 9.9.6-community -> 10.6.0-community
+- Update postgresql-exporter 0.20.0 -> 0.17.2
+
 ## [8.0.6-bb.4] - 2024-08-27
 ### Changed
 - Modified templating for `podLabels` for `deployment.yaml`, `sonarqube-sts.yaml`, `statefulset.yaml`, and `statefulset-slaves.yamll` to use `tpl` to support passing kiali-required labels.
