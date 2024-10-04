@@ -3,7 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [10.6.1-bb.0] - 2024-08-27
+## [10.6.1-bb.1] - 2024-10-4
+### Changed
+- Update "community" edition logic for appVersion
+
+## [10.6.1-bb.0] - 2024-10-3
 ### Changed
 - Update gluon 0.5.0 -> 5.4.0
 - Update sonarqube 9.9.6-community -> 10.6.0-community
