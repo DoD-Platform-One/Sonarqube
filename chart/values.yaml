@@ -77,7 +77,7 @@ edition: "community"
 
 image:
   repository: registry1.dso.mil/ironbank/big-bang/sonarqube-10
-  tag: 10.6.0-{{ .Values.edition }}
+  tag: 10.6.0-community
   pullPolicy: IfNotPresent
   # If using a private repository, the imagePullSecrets to use
   pullSecrets:

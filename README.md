@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # sonarqube
 
-![Version: 10.6.1-bb.0](https://img.shields.io/badge/Version-10.6.1--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 10.6.0](https://img.shields.io/badge/AppVersion-10.6.0-informational?style=flat-square)
+![Version: 10.6.1-bb.1](https://img.shields.io/badge/Version-10.6.1--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 10.6.0](https://img.shields.io/badge/AppVersion-10.6.0-informational?style=flat-square)
 
 SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution, SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects. The tool analyses 30+ different programming languages and integrates into your CI pipeline and DevOps platform to ensure that your code meets high-quality standards.
 
@@ -71,7 +71,7 @@ helm install sonarqube chart/
 | sso.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | edition | string | `"community"` |  |
 | image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-10"` |  |
-| image.tag | string | `"10.6.0-{{ .Values.edition }}"` |  |
+| image.tag | string | `"10.6.0-community"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.pullSecrets[0].name | string | `"private-registry"` |  |
 | securityContext.fsGroup | int | `1000` |  |
@@ -108,14 +108,14 @@ helm install sonarqube chart/
 | hostAliases | list | `[]` |  |
 | readinessProbe.exec.command[0] | string | `"sh"` |  |
 | readinessProbe.exec.command[1] | string | `"-c"` |  |
-| readinessProbe.exec.command[2] | string | `"#!/bin/bash\n# A Sonarqube container is considered ready if the status is UP, DB_MIGRATION_NEEDED or DB_MIGRATION_RUNNING\n# status about migration are added to prevent the node to be kill while sonarqube is upgrading the database.\nif wget --no-proxy -qO- http://localhost:{{ .Values.service.internalPort }}{{ .Values.readinessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/status \| grep -q -e '\"status\":\"UP\"' -e '\"status\":\"DB_MIGRATION_NEEDED\"' -e '\"status\":\"DB_MIGRATION_RUNNING\"'; then\n  exit 0\nfi\nexit 1\n"` |  |
+| readinessProbe.exec.command[2] | string | `"#!/bin/bash\n# A Sonarqube container is considered ready if the status is UP, DB_MIGRATION_NEEDED or DB_MIGRATION_RUNNING\n# status about migration are added to prevent the node to be kill while sonarqube is upgrading the database.\nif curl -s http://localhost:{{ .Values.service.internalPort }}{{ .Values.readinessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/status \| grep -q -e '\"status\":\"UP\"' -e '\"status\":\"DB_MIGRATION_NEEDED\"' -e '\"status\":\"DB_MIGRATION_RUNNING\"'; then\n  exit 0\nfi\nexit 1\n"` |  |
 | readinessProbe.initialDelaySeconds | int | `60` |  |
 | readinessProbe.periodSeconds | int | `30` |  |
 | readinessProbe.failureThreshold | int | `6` |  |
-| readinessProbe.timeoutSeconds | int | `1` |  |
+| readinessProbe.timeoutSeconds | int | `90` |  |
 | livenessProbe.exec.command[0] | string | `"sh"` |  |
 | livenessProbe.exec.command[1] | string | `"-c"` |  |
-| livenessProbe.exec.command[2] | string | `"wget --no-proxy --quiet -O /dev/null --timeout={{ .Values.livenessProbe.timeoutSeconds }} --header=\"X-Sonar-Passcode: $SONAR_WEB_SYSTEMPASSCODE\" \"http://localhost:{{ .Values.service.internalPort }}{{ .Values.livenessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/liveness\"\n"` |  |
+| livenessProbe.exec.command[2] | string | `"curl --silent --fail --output /dev/null --max-time {{ .Values.livenessProbe.timeoutSeconds \| default 1 }} --header \"X-Sonar-Passcode: $SONAR_WEB_SYSTEMPASSCODE\" \"http://localhost:{{ .Values.service.internalPort }}{{ .Values.livenessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/liveness\"\n"` |  |
 | livenessProbe.initialDelaySeconds | int | `60` |  |
 | livenessProbe.periodSeconds | int | `30` |  |
 | livenessProbe.failureThreshold | int | `6` |  |
@@ -125,6 +125,12 @@ helm install sonarqube chart/
 | startupProbe.failureThreshold | int | `24` |  |
 | startupProbe.timeoutSeconds | int | `1` |  |
 | initContainers.image | string | `"registry1.dso.mil/ironbank/big-bang/base:2.1.0"` |  |
+| initContainers.allowPrivilegeEscalation | bool | `false` |  |
+| initContainers.runAsNonRoot | bool | `true` |  |
+| initContainers.runAsUser | int | `1000` |  |
+| initContainers.runAsGroup | int | `0` |  |
+| initContainers.seccompProfile.type | string | `"RuntimeDefault"` |  |
+| initContainers.capabilities.drop[0] | string | `"ALL"` |  |
 | initContainers.resources.limits.memory | string | `"300Mi"` |  |
 | initContainers.resources.limits.cpu | string | `"50m"` |  |
 | initContainers.resources.requests.memory | string | `"300Mi"` |  |
@@ -167,18 +173,19 @@ helm install sonarqube chart/
 | env[0].name | string | `"JDK_JAVA_OPTIONS"` |  |
 | env[0].value | string | `"-Dcom.redhat.fips=false"` |  |
 | annotations | object | `{}` |  |
-| resources.limits.cpu | string | `"800m"` |  |
+| resources.limits.cpu | string | `"1000m"` |  |
 | resources.limits.memory | string | `"6144M"` |  |
 | resources.limits.ephemeral-storage | string | `"512000M"` |  |
-| resources.requests.cpu | string | `"400m"` |  |
+| resources.requests.cpu | string | `"500m"` |  |
 | resources.requests.memory | string | `"2048M"` |  |
 | resources.requests.ephemeral-storage | string | `"1536M"` |  |
 | persistence.enabled | bool | `false` |  |
 | persistence.annotations | object | `{}` |  |
 | persistence.storageClass | string | `nil` |  |
 | persistence.accessMode | string | `"ReadWriteOnce"` |  |
-| persistence.size | string | `"10Gi"` |  |
+| persistence.size | string | `"20Gi"` |  |
 | persistence.uid | int | `1000` |  |
+| persistence.guid | int | `0` |  |
 | persistence.volumes | list | `[]` |  |
 | persistence.mounts | list | `[]` |  |
 | emptyDir | object | `{}` |  |
