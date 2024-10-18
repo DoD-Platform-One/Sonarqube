@@ -13,8 +13,8 @@ Be sure to also test against monitoring locally as it is integrated by default w
 The below details the steps required to update to a new version of the Sonarqube package.
 
 1. Do diff of [upstream chart](https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube-lts) between old and new release tags to become aware of any significant chart changes. A graphical diff tool such as [Meld](https://meldmerge.org/) is useful. You can see where the current helm chart came from by inspecting ```/chart/kptfile```
-1. Create a development branch and merge request from the Gitlab issue.
-1. Merge/Sync the new helm chart with the existing package code. A graphical diff tool like [Meld](https://meldmerge.org/) is useful. Reference the "Modifications made to upstream chart" section below. Be careful not to overwrite Big Bang Package changes that need to be kept. Note that some files will have combinations of changes that you will overwrite and changes that you keep. Stay alert. The hardest file to update is the ```/chart/values.yaml```.
+1. Create a development branch and merge request tied to the Repo1 issue created for the Sonarqube package upgrade.  The association between the branch and the issue can be made by prefixing the branch name with the issue number, e.g. 56-update-sonarqube-package. DO NOT create a branch if working renovate/ironbank. Continue edits on renovate/ironbank.
+1. From the root of this repository, sync the BigBang Sonarqube package chart with the upstream Sonarqube chart using `kpt pkg update chart@sonarqube-<target version> --strategy alpha-git-patch`.  Please note that kpt > v1.0.0 does NOT support this update strategy, and the latest kpt version that does is 0.39.2Merge/Sync the new helm chart with the existing package code. A graphical diff tool like [Meld](https://meldmerge.org/) is useful. Reference the "Modifications made to upstream chart" section below. Be careful not to overwrite Big Bang Package changes that need to be kept. Note that some files will have combinations of changes that you will overwrite and changes that you keep. Stay alert. The hardest file to update is the ```/chart/values.yaml```.
 1. In `chart/Chart.yaml` update gluon to the latest version and run `helm dependency update chart` from the top level of the repo to package it up.
 1. Modify the `image.tag` value in `chart/values.yaml` to point to the newest version.
 1. Update `chart/Chart.yaml` to the appropriate versions. The annotation version should match the ```appVersion```.
@@ -90,18 +90,18 @@ addons:
       tag: null
       branch: "name-of-your-development-branch"
     values:
-      curlContainerImage: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"
+      curlContainerImage: "registry1.dso.mil/ironbank/big-bang/base:2.1.0"
       monitoring:
         enabled: true
       prometheusExporter:
         enabled: true
-        version: "0.20.0"
+        version: "0.17.2"
         webBeanPort: 8000
         ceBeanPort: 8001
         config:
           rules:
-            - pattern: ".*"
-        image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.20.0
+          - pattern: ".*"
+        image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.17.2
       monitoringPasscode: "define_it" # set this password to your instance admin password used for the UI
       networkPolicy:
         enabled: false # additional network policies may be needed if set to "true"
