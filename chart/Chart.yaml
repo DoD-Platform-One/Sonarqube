@@ -26,6 +26,7 @@ maintainers:
 - name: davividal
   email: davi.koscianski-vidal@sonarsource.com
 annotations:
+  bigbang.dev/maintenanceTrack: bb_integrated
   artifacthub.io/links: |
     - name: support
       url: https://community.sonarsource.com/
