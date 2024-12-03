@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [10.6.1-bb.2] - 2024-10-9
 ### Changed
 - Update cypress test upgrade logic
+- Added the maintenance track annotation and badge
 
 ## [10.6.1-bb.1] - 2024-10-4
 ### Changed
