@@ -13,7 +13,7 @@ metadata:
     {{ $key }}: {{ $value | quote }}
   {{- end }}
   annotations:
-    "helm.sh/hook": post-install
+    "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
@@ -42,7 +42,7 @@ spec:
               cd "/ftmp"
 
               # Wait for the given SAML IdP metadata url to exist and give data back
-              while [ $(curl -sw {{ .Values.sso.idpmetadataurl }} -o /dev/null) -ne 200 ]; do
+              while [ $(curl -s -o /dev/null -w "%{http_code}" "{{ .Values.sso.idpmetadataurl }}") -ne 200 ]; do
                 echo "Waiting for IdP metadata..."
                 sleep 10;
               done
@@ -50,6 +50,7 @@ spec:
 
               # Wait until SonarQube system status is UP
               until curl -v --connect-timeout 100 {{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/system/status | grep -w UP; do
+              echo "Waiting for SonarQube to be live..."
               sleep 10
               done
             {{- if and .Values.istio.enabled (eq .Values.istio.injection "enabled") }}
