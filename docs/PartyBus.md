@@ -10,9 +10,9 @@
 8. Name = "Platform One Quality Gate" > Save
 9. Set as Default
 10. Add Condition (for each) >  
-    1.  On New Code and Overall Code
-        1.  Coverage = 80
-        2.  Maintainability Rating = A
-        3.  Reliability Rating = A
-        4.  Security Hotspots Reviewed = 0
-        5.  Security Rating = A
+    1. On New Code and Overall Code
+        1. Coverage = 80
+        2. Maintainability Rating = A
+        3. Reliability Rating = A
+        4. Security Hotspots Reviewed = 0
+        5. Security Rating = A

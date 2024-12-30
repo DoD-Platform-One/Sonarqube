@@ -3,63 +3,96 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [10.6.1-bb.4] - 2024-12-20
+
+### Fixed
+
+- Password leak in job args when setting password via values.yaml
+
 ## [10.6.1-bb.3] - 2024-12-18
+
 ### Changed
+
 - Update configure-sso job to run on helm upgrades alongside installs
 - Update admin password hook job container image
 
 ## [10.6.1-bb.2] - 2024-10-9
+
 ### Changed
+
 - Update cypress test upgrade logic
 - Added the maintenance track annotation and badge
 
 ## [10.6.1-bb.1] - 2024-10-4
+
 ### Changed
+
 - Update "community" edition logic for appVersion
 
 ## [10.6.1-bb.0] - 2024-10-3
+
 ### Changed
+
 - Update gluon 0.5.0 -> 5.4.0
 - Update sonarqube 9.9.6-community -> 10.6.0-community
 - Update postgresql-exporter 0.20.0 -> 0.17.2
 
 ## [8.0.6-bb.4] - 2024-08-27
+
 ### Changed
+
 - Modified templating for `podLabels` for `deployment.yaml`, `sonarqube-sts.yaml`, `statefulset.yaml`, and `statefulset-slaves.yamll` to use `tpl` to support passing kiali-required labels.
 
 ## [8.0.6-bb.3] - 2024-08-13
+
 ### Changed
+
 - Addressed value logic for the admin password change hook job
 - Switched the admin password change hook job image value `curlContainerImage` to hardened registry1 curl capable container
 
 ## [8.0.6-bb.2] - 2024-07-16
+
 ### Changed
+
 - Removed the allow nothing policy
 - Moved the authorization policies
 - Updated the istio hardened doc
 
 ## [8.0.6-bb.1] - 2024-07-09
+
 ### Changed
+
 - Added in waits between cypress test calls to avoid having cypress tests lock out and fail with failed response hanging
 
 ## [8.0.6-bb.0] - 2024-07-03
+
 ### Changed
+
 - Update registry1.dso.mil/ironbank/big-bang/sonarqube-9 9.9.5-community -> 9.9.6-community
 
 ## [8.0.5-bb.3] - 2024-07-01
+
 ### Fixed
+
 - Resolved issue with sso helm template matching up with values.yaml file.
 
 ## [8.0.5-bb.2] - 2024-06-27
+
 ### Added
+
 - Added SSO ability to pull SAML config and write setting to the SonarQube API.
 
 ## [8.0.5-bb.1] - 2024-06-27
+
 ### Fixed
+
 - Removed duplicated chart.yaml artifact
 
 ## [8.0.5-bb.0] - 2024-06-18
+
 ### Changed
+
 - Update gluon 0.4.9 -> 0.5.0
 - Update registry1.dso.mil/ironbank/big-bang/sonarqube-9 9.9.4-community -> 9.9.5-community
 - Update registry1.dso.mil/ironbank/opensource/postgres/postgresql12 12.18 -> 12.19

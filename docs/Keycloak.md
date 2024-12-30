@@ -1,20 +1,23 @@
 # SAML Keycloak integration for Sonarqube
+
 [Upstream Sonarqube Docs](https://docs.sonarqube.org/latest/instance-administration/delegated-auth/#header-4)
 
 ## Resources to setup keycloak-dev on a dev-cluster
+
 1. You will need a K8s development environment with two Gateway resources configured. One for passthrough and the other for public. Use the k3d-dev.sh script with the -a flag to deploy a dev cluster with MetalLB.
 2. Add this values file to your overrides [keycloak-dev-values](https://repo1.dso.mil/big-bang/bigbang/-/blob/master/docs/assets/configs/example/keycloak-dev-values.yaml?ref_type=heads)
 3. Example dev-cluster deployment
+
 ```
 helm upgrade -i bigbang ./bigbang/chart -n bigbang --create-namespace -f ./overrides/policy-overrides-k3d.yaml \
     -f ./overrides/registry-values.yaml \
     -f ./bigbang/chart/ingress-certs.yaml \
     -f ./overrides/sonarqube/sonarqube-dev-values.yaml \
     -f ./overrides/keycloak-dev-values.yaml
-```    
-
+```
 
 ## In the Keycloak server, create a new SAML client
+
 Create a new client
 
 1. "Client ID" is something like "sonarqube"
@@ -24,43 +27,45 @@ Create a new client
 Configure the new client
 
 1. in Settings
-  1. Set"Client Signature Required" to OFF
-  2. Set "Valid Redirect URIs" to "/oauth2/callback/*, E.G https://sonarqube.mycompany.com/oauth2/callback/saml
+1. Set"Client Signature Required" to OFF
+2. Set "Valid Redirect URIs" to "/oauth2/callback/*, E.G <https://sonarqube.mycompany.com/oauth2/callback/saml>
 2. in Client Scopes > Default Client Scopes , remove "role_list" from "Assigned Default Client Scopes" (to prevent the error com.onelogin.saml2.exception.ValidationError: Found an Attribute element with duplicated Name during authentication)
 3. In Mappers create a mapper for each user attribute (Note that values provided below for Name, SAML Attribute Name, Role Attribute Name are only example values):
-  1. Create a mapper for the login:
-  2. Name: Login
-  3. Mapper Type: User Property
-  4. Property: Username (Note that the login should not contain any special characters other than .-_@ to meet SonarQube restrictions.)
-  5. SAML Attribute Name: login
-  6. Create a mapper for the name:
-  7. Name: Name
-  8. Mapper Type: User Property
-  9. User Attribute: Username (It can also be another attribute you would previously have specified for the users)
-  10. SAML Attribute Name: name
-  11. (Optional) Create a mapper for the email:
-  12. Name: Email
-  13. Mapper Type: User Property
-  14. Property: Email
-  15. SAML Attribute Name: email
-  16. (Optional) Create a mapper for the groups (If you rely on a list of roles defined in "Roles" of the Realm (not in "Roles" of the client)):
-  17. Name: Groups
-  18. Mapper Type: Role list
-  19. Role Attribute Name: groups
-  20. Single Role Attribute: ON
-  21. If you rely on a list of groups defined in "Groups":
-  22. Name: Groups
-  23. Mapper Type: Group list
-  24. Role Attribute Name: groups
-  25. Single Role Attribute: ON
-  26. Full Group Path: OFF
+1. Create a mapper for the login:
+2. Name: Login
+3. Mapper Type: User Property
+4. Property: Username (Note that the login should not contain any special characters other than .-_@ to meet SonarQube restrictions.)
+5. SAML Attribute Name: login
+6. Create a mapper for the name:
+7. Name: Name
+8. Mapper Type: User Property
+9. User Attribute: Username (It can also be another attribute you would previously have specified for the users)
+10. SAML Attribute Name: name
+11. (Optional) Create a mapper for the email:
+12. Name: Email
+13. Mapper Type: User Property
+14. Property: Email
+15. SAML Attribute Name: email
+16. (Optional) Create a mapper for the groups (If you rely on a list of roles defined in "Roles" of the Realm (not in "Roles" of the client)):
+17. Name: Groups
+18. Mapper Type: Role list
+19. Role Attribute Name: groups
+20. Single Role Attribute: ON
+21. If you rely on a list of groups defined in "Groups":
+22. Name: Groups
+23. Mapper Type: Group list
+24. Role Attribute Name: groups
+25. Single Role Attribute: ON
+26. Full Group Path: OFF
 
 ## In SonarQube, Configure SAML authentication
+
 Go to Administration > Configuration > General Settings > Security > SAML
+
 * Enabled should be set to true
 * Application ID is the value of the "Client ID" you set in Keycloak (for example "sonarqube")
-* Provider ID is the value of the "EntityDescriptor" > "entityID" attribute in the XML configuration file (for example "http://keycloak:8080/auth/realms/sonarqube" where sonarqube is the name of the realm)
-* SAML login url is the value of "SingleSignOnService" > "Location" attribute in the XML configuration file (for example "http://keycloak:8080/auth/realms/sonarqube/protocol/saml")
+* Provider ID is the value of the "EntityDescriptor" > "entityID" attribute in the XML configuration file (for example "<http://keycloak:8080/auth/realms/sonarqube>" where sonarqube is the name of the realm)
+* SAML login url is the value of "SingleSignOnService" > "Location" attribute in the XML configuration file (for example "<http://keycloak:8080/auth/realms/sonarqube/protocol/saml>")
 * Provider certificate is the value you get from Realm Settings -> Keys -> click on the Certificate button
 * SAML user login attribute is the value set in the login mapper in "SAML Attribute Name"
 * SAML user name attribute is the value set in the name mapper in "SAML Attribute Name"
@@ -68,9 +73,10 @@ Go to Administration > Configuration > General Settings > Security > SAML
 * (Optional) SAML group attribute is the value set in the groups mapper in "Role/Group Attribute Name"
 In the login form, the new button "Log in with SAML" allows users to connect with their SAML account.
 
-## Helm Values Config example:
+## Helm Values Config example
 
-### Within BigBang:
+### Within BigBang
+
 ```yaml
 addons:
   sonarqube:
@@ -96,14 +102,17 @@ addons:
 ```
 
 ### Within BigBang using API method
+
 #### If your using the plateform1 keycloak you can use the values below
+
 #### If your working with keycloak-dev
-1. Login to the Keycloak admin console: (admin/password) https://keycloak.dev.bigbang.mil/auth/admin/master/console/
+
+1. Login to the Keycloak admin console: (admin/password) <https://keycloak.dev.bigbang.mil/auth/admin/master/console/>
 2. Switch to the baby-yoda realm.
 3. Create a new user. Be sure to do the following: Switch "Email verified" to "Yes", join the "Impact Level 2 Authorized" group, remove all "Required user actions" (do this after the user is created), create a password (disable "Temporary").
 4. Login to Gitlab using SSO and the user you just configured.
 5. Setup MFA.
-- Reminder: Change the below values to point to your instance of keycloak-dev
+* Reminder: Change the below values to point to your instance of keycloak-dev
 
 ```yaml
 addons:
@@ -144,9 +153,10 @@ addons:
           requests:
             cpu: 100m
             memory: 256Mi
-```            
+```
 
-### Within Sonarqube package:
+### Within Sonarqube package
+
 ```yaml
 sonarProperties:
   sonar.forceAuthentication: true
@@ -171,30 +181,30 @@ sonarProperties:
    set Server base URL to Sonarqube URL
    (for ex: https:/sonarqube.dsop.io) without a trailing /
 3. On a different tab on the browser, login to  keycloak realm
-   - From Clients choose the sonarqube client and note the Client id
-     - Set Root URL to empty string
-     - Set Valid Redirect URI to
+   * From Clients choose the sonarqube client and note the Client id
+     * Set Root URL to empty string
+     * Set Valid Redirect URI to
         ```https://<sonarqube url>/*```
-        (for ex: https://sonarqube.dsop.io/*)
-     - Set Base URI to Sonarqube URL
-       (for ex: https://sonarqube.dsop.io) without a trailing /
-   - On Clients-<Sonarqube Client>->Credentials regenerate the secret and note it down
-   - On Clients-<Sonarqube Client>->ClientScopes->Sonarqube->Mappers
-     - Click Add Builtin and add "groups" scope
-   - On Users, click "Add User" and enter
-     - Username - <username of the admin user>
-     - email - must have @admin.mil id
-     - First name
-     - Last name
-     - Email Verified - On
-     - Save
-   - On Users, on the Credentials tab and set password
-   - On Users, on the Groups tab and join Impact Level2 Authorized and System Admins IL2
+        (for ex: <https://sonarqube.dsop.io/>*)
+     * Set Base URI to Sonarqube URL
+       (for ex: <https://sonarqube.dsop.io>) without a trailing /
+   * On Clients-<Sonarqube Client>->Credentials regenerate the secret and note it down
+   * On Clients-<Sonarqube Client>->ClientScopes->Sonarqube->Mappers
+     * Click Add Builtin and add "groups" scope
+   * On Users, click "Add User" and enter
+     * Username - <username of the admin user>
+     * email - must have @admin.mil id
+     * First name
+     * Last name
+     * Email Verified - On
+     * Save
+   * On Users, on the Credentials tab and set password
+   * On Users, on the Groups tab and join Impact Level2 Authorized and System Admins IL2
 4. In Administration-> Security Set OpenID Connect to enabled
-   - Issuer URI to https://keycloak.fences.dsop.io/auth/realms/baby-yoda
-   - ClientId noted from keycloak above
-   - ClientSecret regenerated from keycloak above
-   - Scopes - openid Sonarqube
+   * Issuer URI to <https://keycloak.fences.dsop.io/auth/realms/baby-yoda>
+   * ClientId noted from keycloak above
+   * ClientSecret regenerated from keycloak above
+   * Scopes - openid Sonarqube
 5. Logout of sonarqube and log back in with the username created above by clicking on oidc login
 6. Logout of sonarqube and log back in with the username admin and password admin
 7. Go to Administration->Security->Users and add username created above to sonar-admin group
