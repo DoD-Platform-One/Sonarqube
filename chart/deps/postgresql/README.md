@@ -4,11 +4,11 @@
 
 For HA, please see [this repo](https://github.com/bitnami/charts/tree/master/bitnami/postgresql-ha)
 
-## TL;DR;
+## TL;DR
 
 ```console
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm install my-release bitnami/postgresql
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install my-release bitnami/postgresql
 ```
 
 ## Introduction
@@ -24,10 +24,11 @@ Bitnami charts can be used with [Kubeapps](https://kubeapps.com/) for deployment
 - PV provisioner support in the underlying infrastructure
 
 ## Installing the Chart
+
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm install my-release bitnami/postgresql
+helm install my-release bitnami/postgresql
 ```
 
 The command deploys PostgreSQL on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -39,7 +40,7 @@ The command deploys PostgreSQL on the Kubernetes cluster in the default configur
 To uninstall/delete the `my-release` deployment:
 
 ```console
-$ helm delete my-release
+helm delete my-release
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -226,7 +227,7 @@ The above command sets the PostgreSQL `postgres` account password to `secretpass
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install my-release -f values.yaml bitnami/postgresql
+helm install my-release -f values.yaml bitnami/postgresql
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -244,30 +245,35 @@ Bitnami will release a new chart updating its containers if a new version of the
 This chart includes a `values-production.yaml` file where you can find some parameters oriented to production configuration in comparison to the regular `values.yaml`. You can use this file instead of the default one.
 
 - Enable replication:
+
 ```diff
 - replication.enabled: false
 + replication.enabled: true
 ```
 
 - Number of slaves replicas:
+
 ```diff
 - replication.slaveReplicas: 1
 + replication.slaveReplicas: 2
 ```
 
 - Set synchronous commit mode:
+
 ```diff
 - replication.synchronousCommit: "off"
 + replication.synchronousCommit: "on"
 ```
 
 - Number of replicas that will have synchronous replication:
+
 ```diff
 - replication.numSynchronousReplicas: 0
 + replication.numSynchronousReplicas: 1
 ```
 
 - Start a prometheus exporter:
+
 ```diff
 - metrics.enabled: false
 + metrics.enabled: true
@@ -395,7 +401,7 @@ To enable network policy for PostgreSQL, install [a networking plugin that imple
 For Kubernetes v1.5 & v1.6, you must also turn on NetworkPolicy by setting the DefaultDeny namespace annotation. Note: this will enforce policy for _all_ pods in the namespace:
 
 ```console
-$ kubectl annotate namespace default "net.beta.kubernetes.io/network-policy={\"ingress\":{\"isolation\":\"DefaultDeny\"}}"
+kubectl annotate namespace default "net.beta.kubernetes.io/network-policy={\"ingress\":{\"isolation\":\"DefaultDeny\"}}"
 ```
 
 With NetworkPolicy enabled, traffic will be limited to just port 5432.
@@ -449,7 +455,7 @@ Adds support for LDAP configuration.
 
 Helm performs a lookup for the object based on its group (apps), version (v1), and kind (Deployment). Also known as its GroupVersionKind, or GVK. Changing the GVK is considered a compatibility breaker from Kubernetes' point of view, so you cannot "upgrade" those objects to the new GVK in-place. Earlier versions of Helm 3 did not perform the lookup correctly which has since been fixed to match the spec.
 
-In https://github.com/helm/charts/pull/17281 the `apiVersion` of the statefulset resources was updated to `apps/v1` in tune with the api's deprecated, resulting in compatibility breakage.
+In <https://github.com/helm/charts/pull/17281> the `apiVersion` of the statefulset resources was updated to `apps/v1` in tune with the api's deprecated, resulting in compatibility breakage.
 
 This major version bump signifies this change.
 
@@ -457,11 +463,11 @@ This major version bump signifies this change.
 
 In this version, the chart will use PostgreSQL with the Postgis extension included. The version used with Postgresql version 10, 11 and 12 is Postgis 2.5. It has been compiled with the following dependencies:
 
- - protobuf
- - protobuf-c
- - json-c
- - geos
- - proj
+- protobuf
+- protobuf-c
+- json-c
+- geos
+- proj
 
 ## 5.0.0
 
@@ -491,6 +497,7 @@ INFO  ==> ** Starting PostgreSQL **
   [1] FATAL:  database files are incompatible with server
   [1] DETAIL:  The data directory was initialized by PostgreSQL version 10, which is not compatible with this version 11.3.
 ```
+
 In this case, you should migrate the data from the old chart to the new one following an approach similar to that described in [this section](https://www.postgresql.org/docs/current/upgrading.html#UPGRADING-VIA-PGDUMPALL) from the official documentation. Basically, create a database dump in the old chart, move and restore it in the new one.
 
 ### 4.0.0
@@ -518,29 +525,29 @@ It also fixes an issue with `postgresql.master.fullname` helper template not obe
 
 In order to upgrade from the `0.X.X` branch to `1.X.X`, you should follow the below steps:
 
- - Obtain the service name (`SERVICE_NAME`) and password (`OLD_PASSWORD`) of the existing postgresql chart. You can find the instructions to obtain the password in the NOTES.txt, the service name can be obtained by running
+- Obtain the service name (`SERVICE_NAME`) and password (`OLD_PASSWORD`) of the existing postgresql chart. You can find the instructions to obtain the password in the NOTES.txt, the service name can be obtained by running
 
  ```console
-$ kubectl get svc
+kubectl get svc
  ```
 
 - Install (not upgrade) the new version
 
 ```console
-$ helm repo update
-$ helm install my-release bitnami/postgresql
+helm repo update
+helm install my-release bitnami/postgresql
 ```
 
 - Connect to the new pod (you can obtain the name by running `kubectl get pods`):
 
 ```console
-$ kubectl exec -it NAME bash
+kubectl exec -it NAME bash
 ```
 
 - Once logged in, create a dump file from the previous database using `pg_dump`, for that we should connect to the previous postgresql chart:
 
 ```console
-$ pg_dump -h SERVICE_NAME -U postgres DATABASE_NAME > /tmp/backup.sql
+pg_dump -h SERVICE_NAME -U postgres DATABASE_NAME > /tmp/backup.sql
 ```
 
 After run above command you should be prompted for a password, this password is the previous chart password (`OLD_PASSWORD`).
@@ -549,7 +556,7 @@ This operation could take some time depending on the database size.
 - Once you have the backup file, you can restore it with a command like the one below:
 
 ```console
-$ psql -U postgres DATABASE_NAME < /tmp/backup.sql
+psql -U postgres DATABASE_NAME < /tmp/backup.sql
 ```
 
 In this case, you are accessing to the local postgresql, so the password should be the new one (you can find it in NOTES.txt).

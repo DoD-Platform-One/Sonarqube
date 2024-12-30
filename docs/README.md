@@ -5,17 +5,16 @@
 - Application Overview
 - Usage
 - Integrations
-    - Prometheus
-    - ECK
-    - Keycloak
-    - Party Bus
+  - Prometheus
+  - ECK
+  - Keycloak
+  - Party Bus
 - Troubleshooting Tips
 
 ### Application Overview
 
 This repo contains manifests to deploy Sonarqube static code analysis tool into a Kubernetes cluster.
 Additional docs for using Sonarqube and its plugins can be found at <https://docs.sonarqube.org/latest/>
-
 
 ### Usage
 
@@ -68,27 +67,30 @@ For security reasons the administrator password should be changed. This can be d
 
 5)Click the “Change password” button.
 
-
 ### Integrations
 
 #### [Prometheus.md](Prometheus.md)
-- Configuration items 
+
+- Configuration items
 - List of metrics gathered
 - Useful queries [living list]
 
 #### [ECK.md](ECK.md)
+
 - Configuration items
 - Fluentd Pipelines
 - Important Logs
 - Useful queries [living list]
 
 #### [Keycloak.md](Keycloak.md)
+
 - Configuration items
 - Add new groups
 - Claim information
 - OiD / SAML application items
 
 #### [PartyBus.md](PartyBus.md)
+
 - First time configuration
 - OIDC integration
 - Pipeline integration
