@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [10.6.1-bb.5] - 2024-12-20
+
+### Fixed
+
+- Changed to IB ubi 8.10 image for curlContainerImage as it is more widely accessible
+- Updated gluon 0.5.4 -> 0.5.12 to fix pipeline cert issue
+
 ## [10.6.1-bb.4] - 2024-12-20
 
 ### Fixed
