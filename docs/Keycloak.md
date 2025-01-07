@@ -112,6 +112,7 @@ addons:
 3. Create a new user. Be sure to do the following: Switch "Email verified" to "Yes", join the "Impact Level 2 Authorized" group, remove all "Required user actions" (do this after the user is created), create a password (disable "Temporary").
 4. Login to Gitlab using SSO and the user you just configured.
 5. Setup MFA.
+
 * Reminder: Change the below values to point to your instance of keycloak-dev
 
 ```yaml
