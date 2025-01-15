@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [10.6.1-bb.6] - 2024-01-13
+
+### Fixed
+
+- Set metadata.labels in _pod.tpl to use `sonarqube.workloadLabels` variable as it already has the standard Kubernetes labels
+
 ## [10.6.1-bb.5] - 2024-12-20
 
 ### Fixed

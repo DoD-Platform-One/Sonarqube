@@ -14,7 +14,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
   labels:
-    {{- include "sonarqube.selectorLabels" . | nindent 4 }}
+    {{- include "sonarqube.workloadLabels" . | nindent 4 }}
     {{- with .Values.podLabels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}

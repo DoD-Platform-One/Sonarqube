@@ -191,6 +191,10 @@ This is a high-level list of modifications that Big Bang has made to the upstrea
 - Added define "deployment.waitForDb.compatible"
 - Added define "sonarqube.chart"
 
+## chart/templates/_pod.tpl
+
+- Set metadata.labels to use `sonarqube.workloadLabels` variable as it already has the standard Kubernetes labels
+
 ## chart/tests/cypress/*
 
 - add cypress tests
