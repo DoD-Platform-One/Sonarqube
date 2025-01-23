@@ -1,13 +1,13 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # sonarqube
 
-![Version: 10.6.1-bb.6](https://img.shields.io/badge/Version-10.6.1--bb.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 10.6.0](https://img.shields.io/badge/AppVersion-10.6.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 10.7.0-bb.0](https://img.shields.io/badge/Version-10.7.0--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 10.7.0](https://img.shields.io/badge/AppVersion-10.7.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution, SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects. The tool analyses 30+ different programming languages and integrates into your CI pipeline and DevOps platform to ensure that your code meets high-quality standards.
 
 ## Upstream References
-- <https://www.sonarqube.org/>
 
+- <https://www.sonarqube.org/>
 - <https://github.com/SonarSource/helm-chart-sonarqube>
 - <https://github.com/SonarSource/docker-sonarqube>
 - <https://github.com/SonarSource/sonarqube>
@@ -73,7 +73,7 @@ helm install sonarqube chart/
 | sso.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | edition | string | `"community"` |  |
 | image.repository | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-10"` |  |
-| image.tag | string | `"10.6.0-community"` |  |
+| image.tag | string | `"10.7.0-community"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.pullSecrets[0].name | string | `"private-registry"` |  |
 | securityContext.fsGroup | int | `1000` |  |
@@ -140,7 +140,7 @@ helm install sonarqube chart/
 | initContainers.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | extraInitContainers | object | `{}` |  |
 | extraContainers | list | `[]` |  |
-| waitForDb.image | string | `"registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.19"` |  |
+| waitForDb.image | string | `"registry1.dso.mil/ironbank/opensource/postgres/postgresql:16.2"` |  |
 | caCerts.enabled | bool | `false` |  |
 | initSysctl.enabled | bool | `false` |  |
 | initSysctl.vmMaxMapCount | int | `524288` |  |
@@ -163,11 +163,11 @@ helm install sonarqube chart/
 | prometheusExporter.webBeanPort | int | `8000` |  |
 | prometheusExporter.ceBeanPort | int | `8001` |  |
 | prometheusExporter.config.rules[0].pattern | string | `".*"` |  |
-| prometheusExporter.image | string | `"registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.17.2"` |  |
+| prometheusExporter.image | string | `"registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:1.0.1"` |  |
 | prometheusMonitoring.podMonitor.enabled | bool | `false` |  |
 | prometheusMonitoring.podMonitor.interval | string | `"30s"` |  |
 | plugins.install | list | `[]` |  |
-| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.6.0-community"` |  |
+| plugins.image | string | `"registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.7.0-community"` |  |
 | plugins.noCheckCertificate | bool | `false` |  |
 | jvmOpts | string | `""` |  |
 | jvmCeOpts | string | `""` |  |
@@ -199,34 +199,31 @@ helm install sonarqube chart/
 | jdbcOverwrite.jdbcUsername | string | `"sonarUser"` |  |
 | jdbcOverwrite.jdbcPassword | string | `"sonarPass"` |  |
 | postgresql.enabled | bool | `true` |  |
+| postgresql.service.port | int | `5432` |  |
 | postgresql.postgresqlUsername | string | `"sonarUser"` |  |
 | postgresql.postgresqlPassword | string | `"sonarPass"` |  |
 | postgresql.postgresqlDatabase | string | `"sonarDB"` |  |
-| postgresql.service.port | int | `5432` |  |
-| postgresql.resources.limits.cpu | string | `"100m"` |  |
-| postgresql.resources.limits.memory | string | `"200Mi"` |  |
+| postgresql.auth.enablePostgresUser | bool | `false` |  |
+| postgresql.auth.username | string | `"sonarUser"` |  |
+| postgresql.auth.password | string | `"sonarPass"` |  |
+| postgresql.auth.database | string | `"sonarDB"` |  |
 | postgresql.resources.requests.cpu | string | `"100m"` |  |
 | postgresql.resources.requests.memory | string | `"200Mi"` |  |
 | postgresql.image.registry | string | `"registry1.dso.mil"` |  |
-| postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql12"` |  |
-| postgresql.image.tag | string | `"12.19"` |  |
+| postgresql.image.repository | string | `"ironbank/opensource/postgres/postgresql"` |  |
+| postgresql.image.tag | string | `"16.2"` |  |
 | postgresql.image.pullSecrets[0] | string | `"private-registry"` |  |
-| postgresql.postgresqlConfiguration.listen_addresses | string | `"*"` |  |
-| postgresql.pgHbaConfiguration | string | `"local all all md5\nhost all all all md5"` |  |
-| postgresql.persistence.enabled | bool | `true` |  |
-| postgresql.persistence.accessMode | string | `"ReadWriteOnce"` |  |
-| postgresql.persistence.size | string | `"20Gi"` |  |
-| postgresql.persistence.storageClass | string | `nil` |  |
-| postgresql.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
 | postgresql.postgresqlDataDir | string | `"/var/lib/postgresql/data"` |  |
-| postgresql.volumePermissions.enabled | bool | `false` |  |
-| postgresql.serviceAccount.enabled | bool | `true` |  |
-| postgresql.serviceAccount.automountServiceAccountToken | bool | `false` |  |
-| postgresql.securityContext.enabled | bool | `true` |  |
-| postgresql.securityContext.fsGroup | int | `26` |  |
-| postgresql.securityContext.runAsUser | int | `26` |  |
-| postgresql.securityContext.runAsGroup | int | `26` |  |
-| postgresql.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| postgresql.primary.extraEnvVars[0].name | string | `"POSTGRES_DB"` |  |
+| postgresql.primary.extraEnvVars[0].value | string | `"sonarDB"` |  |
+| postgresql.primary.extraVolumeMounts[0].name | string | `"runtime"` |  |
+| postgresql.primary.extraVolumeMounts[0].mountPath | string | `"/var/run/postgresql"` |  |
+| postgresql.primary.extraVolumes[0].name | string | `"runtime"` |  |
+| postgresql.primary.extraVolumes[0].emptyDir | object | `{}` |  |
+| postgresql.primary.configuration | string | `"listen_addresses = '*'\n"` |  |
+| postgresql.primary.pgHbaConfiguration | string | `"local all all md5\nhost all all all md5"` |  |
+| postgresql.primary.persistence.size | string | `"20Gi"` |  |
+| postgresql.primary.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
 | podLabels | object | `{}` |  |
 | sonarqubeFolder | string | `"/opt/sonarqube"` |  |
 | tests.image | string | `"bitnami/minideb-extras"` |  |
