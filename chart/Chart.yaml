@@ -2,8 +2,8 @@ apiVersion: v2
 name: sonarqube
 description: SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution, SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects. The tool analyses 30+ different programming languages and integrates into your CI pipeline and DevOps platform to ensure that your code meets high-quality standards.
 type: application
-version: 10.6.1-bb.6
-appVersion: 10.6.0
+version: 10.7.0-bb.0
+appVersion: 10.7.0
 keywords:
 - coverage
 - security
@@ -44,23 +44,23 @@ annotations:
     - [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-8.0.6-sonarqube-dce-7.0.6/charts/sonarqube-dce/CHANGELOG.md)
     - [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-8.0.6-sonarqube-dce-7.0.6/charts/sonarqube-dce/README.md)
   bigbang.dev/applicationVersions: |
-    - Sonarqube: 10.6.0-community
+    - Sonarqube: 10.7.0-community
   artifacthub.io/images: |
     - name: sonarqube
-      image: sonarqube:10.6.0-community
+      image: sonarqube:10.7.0-community
   helm.sh/images: |
     - name: sonarqube
-      image: registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.6.0-community
+      image: registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.7.0-community
     - name: base
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
     - name: postgresql
       condition: postgresql.enabled
-      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.19
+      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:16.2
 dependencies:
 - name: postgresql
-  version: 8.6.4
-  repository: file://./deps/postgresql
+  version: '15.2.10'
+  repository: 'oci://registry-1.docker.io/bitnamicharts' 
   condition: postgresql.enabled
 - name: gluon
-  version: '0.5.12'
+  version: '0.5.14'
   repository: 'oci://registry1.dso.mil/bigbang'

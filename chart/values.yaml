@@ -77,7 +77,7 @@ edition: "community"
 
 image:
   repository: registry1.dso.mil/ironbank/big-bang/sonarqube-10
-  tag: 10.6.0-community
+  tag: 10.7.0-community
   pullPolicy: IfNotPresent
   # If using a private repository, the imagePullSecrets to use
   pullSecrets:
@@ -313,7 +313,7 @@ extraInitContainers: {}
 extraContainers: []
 
 waitForDb:
-  image: registry1.dso.mil/ironbank/opensource/postgres/postgresql12:12.19
+  image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:16.2
 ## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
 ## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
 ##
@@ -375,7 +375,7 @@ prometheusExporter:
   # ceConfig:
   #   rules:
   #     - pattern: ".*"
-  image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.17.2
+  image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:1.0.1
   # For use behind a corporate proxy when downloading prometheus
 # httpProxy: ""
 # httpsProxy: ""
@@ -414,7 +414,7 @@ plugins:
   # httpsProxy: ""
   # noProxy: ""
 
-  image: registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.6.0-community
+  image: registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.7.0-community
   # resources: {}
 
   # .netrc secret file with a key "netrc" to use basic auth while downloading plugins
@@ -552,8 +552,10 @@ jdbcOverwrite:
 ## (DEPRECATED) Configuration values for postgresql dependency
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/README.md
 postgresql:
-  # Enable to deploy the PostgreSQL chart
+  # Enable to deploy the PostgreSQL subchart
   enabled: true
+  service:
+    port: 5432
   # To use an external PostgreSQL instance, set enabled to false and uncomment
   # the line below:
   # postgresqlServer: ""
@@ -565,53 +567,46 @@ postgresql:
   postgresqlUsername: "sonarUser"
   postgresqlPassword: "sonarPass"
   postgresqlDatabase: "sonarDB"
+
+  auth:
+    enablePostgresUser: false
+    username: "sonarUser"
+    password: "sonarPass"
+    database: "sonarDB"
   # Specify the TCP port that PostgreSQL should use
-  service:
-    port: 5432
+
   resources:
-    limits:
-      cpu: 100m
-      memory: 200Mi
     requests:
       cpu: 100m
       memory: 200Mi
   image:
     registry: registry1.dso.mil
-    repository: ironbank/opensource/postgres/postgresql12
-    tag: "12.19"
+    repository: ironbank/opensource/postgres/postgresql
+    tag: "16.2"
     pullSecrets:
     - private-registry
-  postgresqlConfiguration: {"listen_addresses": "*"}
-  pgHbaConfiguration: |-
-    local all all md5
-    host all all all md5
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    size: 20Gi
-    storageClass:
-    mountPath: /var/lib/postgresql
+
   postgresqlDataDir: /var/lib/postgresql/data
-
-  volumePermissions:
-    enabled: false
-
-  serviceAccount:
-    enabled: true
-    automountServiceAccountToken: false
-
-  securityContext:
-    # For standard Kubernetes deployment, set enabled=true
-    # If using OpenShift, enabled=false for restricted SCC and enabled=true for anyuid/nonroot SCC
-    enabled: true
-    # fsGroup and runAsUser specifications below are not applied if enabled=false. enabled=false is the required setting for OpenShift "restricted SCC" to work successfully.
-    # postgresql dockerfile sets user as 1001
-    fsGroup: 26
-    runAsUser: 26
-    runAsGroup: 26
-    capabilities:
-      drop:
-      - ALL
+  primary:
+    # when using ironbank/opensource/postgres POSTGRES_DB instantiates database
+    extraEnvVars:
+      - name: POSTGRES_DB
+        value: sonarDB
+    # mount emptyDir as bitnami chart 15.x uses readOnlyRootFilesystem
+    extraVolumeMounts:
+      - name: runtime
+        mountPath: /var/run/postgresql
+    extraVolumes:
+      - name: runtime
+        emptyDir: {}
+    configuration: |
+      listen_addresses = '*'
+    pgHbaConfiguration: |-
+      local all all md5
+      host all all all md5
+    persistence:
+      size: 20Gi
+      mountPath: /var/lib/postgresql
 
 # Additional labels to add to the pods:
 # podLabels:
