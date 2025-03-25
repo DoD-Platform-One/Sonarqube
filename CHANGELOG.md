@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [10.7.0-bb.1] - 2025-03-25
+
+### Updated
+
+- Updated istio related network policies to be more dynamic
+
 ## [10.6.1-bb.6] - 2024-01-13
 
 ### Fixed

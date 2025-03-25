@@ -13,19 +13,15 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          app.kubernetes.io/name: istio-controlplane
+          {{- if .Values.networkPolicies.istioNamespaceSelector }}
+          app.kubernetes.io/name: {{ .Values.networkPolicies.istioNamespaceSelector.ingress }}
+          {{- else }}
+          app.kubernetes.io/name: "istio-controlplane" # label name for istio-system namespace
+          {{- end }}
       podSelector:
         matchLabels:
           {{- toYaml .Values.networkPolicies.ingressLabels | nindent 10}}
     ports:
     - port: {{ .Values.service.externalPort }}
       protocol: TCP
-  egress:
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          app.kubernetes.io/name: istio-controlplane
-      podSelector:
-        matchLabels:
-          istio: pilot
 {{- end }}
