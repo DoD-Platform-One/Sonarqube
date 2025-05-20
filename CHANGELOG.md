@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [10.7.0-bb.3] - 2025-05-19
+
+### Updated
+
+- Updated cypress test to run with larger viewport and no waits
+
 ## [10.7.0-bb.2] - 2025-04-07
 
 ### Updated
