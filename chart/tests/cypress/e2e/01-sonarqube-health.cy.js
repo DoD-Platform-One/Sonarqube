@@ -52,6 +52,9 @@ describe('Basic Sonarqube', function () {
     cy.visit(Cypress.env('url') + '/admin/plugin_risk_consent')
     cy.contains('I understand the risk').click()
 
+    // wait for url to end up on /projects/create
+    cy.url().should('include', '/projects/create')
+
     // Visit account security to create a token
     cy.visit(Cypress.env('url') + '/account/security')
     cy.get('input[placeholder="Enter Token Name"]').type(
