@@ -761,5 +761,5 @@ bbtests:
       cypress_url: "http://sonarqube-sonarqube:9000"
       cypress_url_setup: "http://sonarqube-sonarqube:9000/setup"
       cypress_user: "admin"
-      cypress_password: "new_admin_password"
+      cypress_password: "New_admin_password!2"
       cypress_timeout: "10000"
