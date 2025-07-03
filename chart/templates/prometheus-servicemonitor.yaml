@@ -1,6 +1,6 @@
 {{- if .Values.prometheusMonitoring.podMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
+kind: ServiceMonitor
 metadata:
   name: {{ template "sonarqube.name" . }}
   {{- if .Values.prometheusMonitoring.podMonitor.namespace }}
@@ -20,10 +20,10 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sonarqube.name" . }}
-  podMetricsEndpoints:
+  endpoints:
   - port: http
     path: {{ include "sonarqube.webcontext" . }}api/monitoring/metrics
-    scheme: http
+    scheme: https
     {{- if .Values.prometheusMonitoring.podMonitor.interval }}
     interval: {{ .Values.prometheusMonitoring.podMonitor.interval }}
     {{- end }}
@@ -38,28 +38,11 @@ spec:
       name: {{ template "sonarqube.fullname" . }}-monitoring-passcode
       key: SONAR_WEB_SYSTEMPASSCODE
     {{- end }}
-  {{- if .Values.prometheusExporter.enabled }}
-  {{- if .Values.prometheusExporter.ceBeanPort }}
-  - port: monitoring-ce
-    path: /
-    scheme: http
-    {{- if .Values.prometheusMonitoring.podMonitor.interval }}
-    interval: {{ .Values.prometheusMonitoring.podMonitor.interval }}
-    {{- end }}
-    {{- if .Values.prometheusMonitoring.podMonitor.scrapeTimeout }}
-    scrapeTimeout: {{ .Values.prometheusMonitoring.podMonitor.scrapeTimeout }}
-    {{- end }}
-  {{- end }}
-  {{- if .Values.prometheusExporter.webBeanPort }}
-  - port: monitoring-web
-    path: /
-    scheme: http
-    {{- if .Values.prometheusMonitoring.podMonitor.interval }}
-    interval: {{ .Values.prometheusMonitoring.podMonitor.interval }}
-    {{- end }}
-    {{- if .Values.prometheusMonitoring.podMonitor.scrapeTimeout }}
-    scrapeTimeout: {{ .Values.prometheusMonitoring.podMonitor.scrapeTimeout }}
-    {{- end }}
-  {{- end }}
-  {{- end }}
+    {{- if .Values.istio.enabled }}
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true
+    {{ end }}
 {{- end }}
