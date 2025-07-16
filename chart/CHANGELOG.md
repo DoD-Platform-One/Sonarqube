@@ -2,11 +2,76 @@
 
 All changes to this chart will be documented in this file.
 
+## [2025.1.0]
+* Update Chart's version to 2025.1.0
+* Upgrade SonarQube Server to 2025.1.0
+* Upgrade SonarQube Community Build to 25.1.0.102122
+* Update ingress-nginx subchart to 4.11.3
+* Support Kubernetes v1.32
+* Remove the default passcode provided with `monitoringPasscode`
+* Support Openshift v4.17
+* Improves editions and versions setting for sonarqube chart
+
+## [10.8.1]
+* Update Chart's version to 10.8.1
+* Remove immutable labels selector `app.kubernetes.io/name` and `app.kubernetes.io/version` as it breaks upgrades
+* set `image.tag` empty in default value file, `image.tag` is dynamically set according to the `edition` and `community` fields. user-defined have precedence
+
+## [10.8.0]
+* Update Chart's version to 10.8.0
+* Upgrade SonarQube Server to 10.8.0
+* Release SonarQube Community Build 24.12
+* Support the installation of the Oracle JDBC Driver
+* Support Kubernetes v1.31
+* Deprecate the `community` value for the `edition` parameter
+* Introduce the `community.enabled` and `community.buildNumber` parameters for SonarQube Community Build
+* Deprecate the default value of `image.tag` in favor of an empty string
+* Update the Chart's icon with the SonarQube Server logo
+* Set `app.kubernetes.io/name` and `app.kubernetes.io/version` as selector labels
+* Support Gateway on different namespace in HTTPRoute
+* Change `ingress.ingressClassName` default, set it to `nginx` if `nginx.enabled` or `ingress-nginx.enabled`
+* Ensure that ConfigMap resources are not created for `initFS` and `initSysctl` if not needed
+* Ensure the Pod will stop at `init` stage if init_sysctl.sh failed to modify kernel parameters
+* Replace the example images in initContainers, initSysctl and initFs from `busybox:1.36` to `ubuntu:24.04`, which are commented out by default
+* Make the `automountServiceAccountToken` configurable with `serviceAccount.automountToken` in PodSpec
+* Deprecate `sonarqubeFolder`, `jdbcOverwrite.jdbcPassword` and `terminationGracePeriodSeconds`
+* Deprecate `deploymentStrategy.type`, which will be set to `Recreate`
+* Deprecate `account`, `curlContainerImage`, `adminJobAnnotations`
+* Deprecate the StatefulSet deployment type
+
+## [10.7.0]
+* Update Chart's version to 10.7.0
+* Upgrade SonarQube to 10.7.0
+* Support Kubernetes v1.30
+* Upgrade ingress-nginx dependency to 4.10.1
+* Deprecate `jdbcOverwrite.enable` in favor of `jdbcOverwrite.enabled`
+* Fix regression on env valuesFrom in the new STS template
+* Fix a typo in the new common STS template
+* Enable the setup of ReadOnlyRootFilesystem in the security contexts
+* Support basic chart installation on Openshift
+* Include remaining Route settings
+* Fix networkPolicy.additionalPolicys typo
+* Support install-plugin and prometheusExporter proxy variables in secret
+* Support GatewayAPI HttpRoute
+* Support additional labels in the PodMonitor
+* Support Openshift SCCv2 by default when Openshift.enabled=true
+* Deprecate Openshift.createSCC
+* Support additional CA Certificate as ConfigMap instead of Secret only
+* Changed default value for caCerts.image
+* Fix openshift change-admin-password-hook Job SecurityContext failure
+* Support SONAR_OPENSHIFT telemetry env_var
+* Update helm chart repo path in sources
+* Changed SONAR_OPENSHIFT to IS_HELM_OPENSHIFT_ENABLED
+* Remove socketTimeout from jdbcOverwrite.jdbcUrl's default value
+* Refactor Route to be subparameter of OpenShift
+* Make OpenShift.createSCC false by default
+* Deprecate peristence.volumes and persistence.mounts in favor or extraVolumes and extraVolumeMounts
+* Ensure kubernetes.io/version label is smaller than 63 chars
+
 ## [10.6.1]
 
 * Update Chart's version to 10.6.1
 * Fix a typo in the new common STS template
-* Fix regression on env valuesFrom in the new STS template
 
 ## [10.6.0]
 

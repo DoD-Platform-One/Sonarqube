@@ -9,7 +9,7 @@ metadata:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-  {{- range $key, $value := .Values.service.labels }}
+  {{- range $key, $value := .Values.upstream.service.labels }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
   annotations:
@@ -23,7 +23,7 @@ spec:
         app: {{ template "sonarqube.name" . }}
         heritage: {{ .Release.Service }}
         release: {{ .Release.Name }}
-      {{- range $key, $value := .Values.service.labels }}
+      {{- range $key, $value := .Values.upstream.service.labels }}
         {{ $key }}: {{ $value | quote }}
       {{- end }}
     spec:
@@ -49,7 +49,7 @@ spec:
               echo "IdP URL is live..."
 
               # Wait until SonarQube system status is UP
-              until curl -v --connect-timeout 100 {{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/system/status | grep -w UP; do
+              until curl -v --connect-timeout 100 {{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/system/status | grep -w UP; do
               echo "Waiting for SonarQube to be live..."
               sleep 10
               done
@@ -93,47 +93,47 @@ spec:
               group_value=$(sed -n "/sonar.auth.saml.group.name:/{n;p}" sonar.properties)
                                        
               # post config to sonarqube api to internal endpoint
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.enabled" \
               --data-urlencode "value=true"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.core.serverBaseURL" \
               --data-urlencode "value={{ .Values.sso.serverBaseURL }}"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.applicationId" \
               --data-urlencode "value=$applicationid_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.providerName" \
               --data-urlencode "value=$providername_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.providerId" \
               --data-urlencode "value=$providerid_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.loginUrl" \
               --data-urlencode "value=$loginurl_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.certificate.secured" \
               --data-urlencode "value=$x509cert_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.user.name" \
               --data-urlencode "value=$name_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.user.login" \
               --data-urlencode "value=$login_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.user.email" \
               --data-urlencode "value=$email_value"
 
-              curl -X POST -u admin:{{ .Values.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}/api/settings/set" \
+              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
               --data-urlencode "key=sonar.auth.saml.user.group" \
               --data-urlencode "value=$group_value"
 

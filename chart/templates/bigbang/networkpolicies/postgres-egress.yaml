@@ -1,4 +1,4 @@
-{{- if and .Values.networkPolicies.enabled (not .Values.postgresql.enabled) }}
+{{- if and .Values.networkPolicies.enabled (not .Values.upstream.postgresql.enabled) }}
 # For external postgres server
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -12,11 +12,11 @@ spec:
   egress:
   - ports:
     - protocol: TCP
-      port: {{ .Values.postgresql.service.port }}
+      port: {{ .Values.upstream.postgresql.service.port }}
     to:
     - ipBlock:
         # This should be replaced with the IP of postgresql.postgresqlServer
-        #cidr: {{ .Values.postgresql.postgresqlServer }}/32
+        #cidr: {{ .Values.upstream.postgresql.postgresqlServer }}/32
         cidr: 0.0.0.0/0
         # ONLY Block requests to AWS metadata IP
         except:

@@ -9,7 +9,7 @@ spec:
     mode: {{ .Values.istio.mtls.mode }}
   selector:
     matchLabels:
-      app: sonarqube
+      app: upstream
   portLevelMtls:
     "8000":
       mode: PERMISSIVE
