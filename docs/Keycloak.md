@@ -19,20 +19,24 @@
         enabled: true
         sso:
           enabled: true
-          serverBaseUrl: "https://your.sonarqube.url/"
-          # name: "sonarqube"
-          # applicationId: ""
-          # providerid: ""
-          # loginUrl: ""
-          # secured: ""
-          # idpmetadataurl: ""
-          # login: "login"
-          # name: "name"
-          # email: "email"
-          # group: "groups
         git:
           tag: null
           branch: "your-branch-name"
+        values:
+          upstream:
+            sonarProperties:
+                sonar.core.serverBaseURL: "https://your.sonarqube.url/" 
+                #sonar.auth.saml.enabled: ""
+                #sonar.auth.saml.applicationId: ""
+                #sonar.auth.saml.providerName: ""
+                #sonar.auth.saml.providerId: ""
+                #sonar.auth.saml.loginUrl: ""
+                #sonar.auth.saml.certificate.secured: ""
+                #sonar.auth.saml.user.login: ""
+                #sonar.auth.saml.user.name: ""
+                #sonar.auth.saml.user.email: ""
+                #sonar.auth.saml.group.name: ""
+
       keycloak:
         enabled: true
         git:
@@ -142,23 +146,31 @@ addons:
       enabled: true
       sso:
         enabled: true
-        # The base URL of the sonarqube server
-        serverBaseURL: "https://your.sonarqube.url"
-        # The client ID of the Sonarqube client in Keycloak
-        applicationId: "your_sonarqube_clientId_from_keycloak"
-        #  You will find this in Keycloak in Realm Settings > General > Endpoints. Click on SAML 2.0 Identify Provider Metadata to obtain the XML configuration file. Search for the value 'EntityDescriptor > entityID'
-        providerid: "https://your.keycloak.url/auth/realms/baby-yoda"
-        # This can be found in the Endpoint SAML metadata as `SingleSignOnService`
-        loginUrl: "https://your.keycloak.url/auth/realms/baby-yoda/protocol/saml"
-        # In, Realm Settings > General > Endpoints this is the URL to 'samlIdentityProviderMetadata'
-        idpmetadataurl: "https://your.keycloak.url/auth/realms/baby-yoda/protocol/saml/descriptor"
-        # This is the RS256 key copied from Keycloak
-        secured: ""
-        # These are set to the SAML attributes defined in "clientScopes
-        login: "login"
-        name: "name"
-        email: "email"
-        group: "groups"
+      values:
+        upstream:
+          sonarProperties:
+            # The base URL of the sonarqube server
+            sonar.core.serverBaseURL: "https://your.sonarqube.url"  
+            # enabling saml authentication 
+            sonar.auth.saml.enabled: true
+            # The client ID of the Sonarqube client in Keycloak
+            sonar.auth.saml.applicationId: "your_sonarqube_clientId_from_keycloak"
+            # SSO login button label 
+            sonar.auth.saml.providerName: "Keycloak SSO"
+            #  You will find this in Keycloak in Realm Settings > General > Endpoints. Click on SAML 2.0 Identify Provider Metadata to obtain the XML configuration file. Search for the value 'EntityDescriptor > entityID'
+            sonar.auth.saml.providerId: "https://your.keycloak.url/auth/realms/baby-yoda"
+            # This can be found in the Endpoint SAML metadata as `SingleSignOnService`
+            sonar.auth.saml.loginUrl: "https://your.keycloak.url/auth/realms/baby-yoda/protocol/saml"
+            # This is the RS256 key copied from Keycloak The value you get from ***Realm Settings > Keys > RS256.*** Click on Certificate.
+            sonar.auth.saml.certificate.secured: ""
+            # These are set to the SAML attributes defined in "clientScopes
+            sonar.auth.saml.user.login: "login"
+            sonar.auth.saml.user.name: "name"
+            sonar.auth.saml.user.email: "email"
+            sonar.auth.saml.group.name: "groups"
+          account:
+            currentAdminPassword: admin
+
 ```
 
 Once the values are updated, run `helm` again with the previous deployment steps to apply the settings. Once sonarqube is redeployed, you can navigate to the [Logging in to Sonarqube using Keycloak SSO](#logging-in-to-sonarqube-using-keycloak-sso) section of this document.

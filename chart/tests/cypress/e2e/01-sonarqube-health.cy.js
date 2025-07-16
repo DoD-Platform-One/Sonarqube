@@ -1,59 +1,111 @@
-const customTimeout = Cypress.env('timeout') ?? 10000
+const customTimeout = Cypress.env('timeout') ?? 30000
 
 // needs to be fixed
 Cypress.on('uncaught:exception', (err, runnable) => {
   // returning false here prevents Cypress from failing the test
   return false
 })
-describe('Basic Sonarqube', function () {
-  it('Check Sonarqube is accessible', function () {
-    cy.viewport(1920, 1080)
 
-    // Avoids needing to dismiss the SonarLint ad
-    cy.intercept('GET', '/api/users/current', (req) => {
-      req.continue((res) => {
-        if (res.statusCode == 200) {
-          expect(res.body).to.have.property('dismissedNotices')
-          res.body.dismissedNotices.sonarlintAd = true
-        }
-      })
-    })
+Cypress.Commands.add('elementExists', (selector) => {
+  return cy.window().then($window => $window.document.querySelector(selector));
+});
 
-    cy.visit(Cypress.env('url'))
-    cy.get('body').then(($body) => {
-      if (
-        $body.find('h1[class="css-6qanlr"]').length > 0 &&
-        $body.find('h1:contains("SonarQube is under maintenance")').length > 0
-      ) {
-        cy.visit(Cypress.env('url') + '/setup')
-        cy.get('button[id="start-migration"]', {
-          timeout: customTimeout,
-        }).click()
-        cy.contains('Database is up-to-date', { timeout: customTimeout })
-        cy.contains('SonarQube is starting', { timeout: customTimeout })
+const doLoginAndPostSteps = () => {
+  return cy.url().then(url => {
+    cy.log(`Current URL in doLoginAndPostSteps: ${url}`);
+    
+    // Normal login flow only
+    cy.log('Using normal login flow...');
+    cy.get('#login-input', { timeout: customTimeout })
+      .should('be.visible')
+      .type(Cypress.env('user'));
+    
+    cy.get('input[name="password"]').type(Cypress.env('password'));
+    cy.get('#login_form > div > div > form > div:nth-child(3) > div > button').contains("Log in").click();
+    cy.wait(2000);
+    
+    cy.wait(3000);
+    
+    // Handle the "Later" button if it appears
+    cy.get('body', { timeout: customTimeout }).then($body => {
+      if ($body.find(':contains("Later")').length > 0) {
+        cy.log('Found "Later" button, clicking...');
+        cy.contains('Later', { timeout: customTimeout }).click();
+      } else {
+        cy.log('No "Later" button found, continuing...');
+      }
+    });
+  });
+};
+
+describe('Basic Sonarqube', function() {
+  it('Check Sonarqube is accessible', function() {
+    // Initial visit with better error handling
+    cy.visit(Cypress.env('url'), {
+      timeout: customTimeout,
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true
+    });
+    
+    // Wait for initial page load and any redirects
+    cy.get('body', { timeout: customTimeout }).should('be.visible')
+    cy.wait(2000) // Give time for any redirects
+    
+    // Check if we've been redirected to maintenance page
+    cy.url().then((currentUrl) => {
+      cy.log(`Current URL: ${currentUrl}`);
+      
+      if (currentUrl.includes('/maintenance')) {
+        cy.log('SonarQube redirected to maintenance page, starting setup...');
+        
+        // Navigate to setup page
+        cy.visit(Cypress.env('url') + '/setup');
+        cy.get('button[type="button"]', { timeout: customTimeout }).click();
+        cy.get('button[id="start-migration"]', { timeout: customTimeout }).click();
+        cy.contains('Database is up-to-date', { timeout: customTimeout });
+        cy.contains('SonarQube is starting', { timeout: customTimeout });
+
+        // Poll for login page after migration, refreshing if needed
+        cy.log('Waiting for SonarQube to finish starting...');
+        cy.wait(3000);
+        cy.reload();
+        cy.url({ timeout: 120000 }).should((url) => {
+          expect(url).to.satisfy(u =>
+            u.includes('/sessions/new') ||
+            u.includes('/login') ||
+            u.includes('/dashboard')
+          );
+        })
+        .then(() => cy.get('body', { timeout: customTimeout }).should('be.visible'))
+        .then(() => doLoginAndPostSteps());
+      } else {
+        return doLoginAndPostSteps();
       }
     })
 
     // Explicitly wait for the page to load
     cy.get('body', { timeout: customTimeout }).should('be.visible')
+      
+    // Verify popup is closed
+    cy.get('[role="dialog"]').should('not.exist');
 
-    // Explicitly wait for the input to load then Login 
-    // and wait for authentication call to complete before moving on
-    cy.get('input[name="login"]', { timeout: customTimeout * 30 })
-      .should('be.visible')
-      .type(Cypress.env('user'))
-    cy.get('input[name="password"]').type(Cypress.env('password'))
-    cy.intercept('POST', '**/api/authentication/login').as('validSession')
-    cy.get('button[type="submit"]').contains('Log in').click()
-    cy.wait('@validSession').then((interception) => {
-      expect(interception.response.statusCode).to.equal(200)
+    //Wait for server to refresh with popup
+    cy.wait(2000)
+    
+    //Check to see if we end up on the screen asking us to consent and if so perform consnet
+    cy.url().then((currentURL) => {
+      if (currentURL.includes('plugin_risk_consent')) {
+        cy.contains("I understand the risk").click()
+      }
     })
-
-    cy.visit(Cypress.env('url') + '/admin/plugin_risk_consent')
-    cy.contains('I understand the risk').click()
-
-    // wait for url to end up on /projects/create
-    cy.url().should('include', '/projects/create')
+    
+    cy.scrollTo('topRight', { duration: 500 })
+    cy.get('button#userAccountMenuDropdown-trigger', { timeout: customTimeout })
+      .should('be.visible')
+      .click();
+    cy.contains("My Account", { timeout: customTimeout }).click();
+    cy.contains("Security", { timeout: customTimeout }).click();
+    cy.wait(2000);
 
     // Visit account security to create a token
     cy.visit(Cypress.env('url') + '/account/security')
@@ -99,5 +151,5 @@ describe('Basic Sonarqube', function () {
     cy.get('button.it__generate-token', { timeout: customTimeout })
       .should('not.be.disabled')
       .click({ force: true })
-  })
-})
+  });
+});

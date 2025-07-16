@@ -22,6 +22,6 @@ spec:
         matchLabels:
           {{- toYaml .Values.networkPolicies.ingressLabels | nindent 10}}
     ports:
-    - port: {{ .Values.service.externalPort }}
+    - port: {{ .Values.upstream.service.externalPort }}
       protocol: TCP
 {{- end }}

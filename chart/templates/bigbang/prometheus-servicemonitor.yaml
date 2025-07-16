@@ -1,0 +1,75 @@
+{{- if and .Values.monitoring.enabled .Values.upstream.prometheusExporter.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "sonarqube.name" . }}
+  {{- if .Values.upstream.prometheusMonitoring.podMonitor.namespace }}
+  namespace: {{ .Values.upstream.prometheusMonitoring.podMonitor.namespace | quote }}
+  {{- else }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "sonarqube.name" . }}
+    {{- with .Values.upstream.prometheusMonitoring.podMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+   {{- if .Values.upstream.prometheusMonitoring.podMonitor.jobLabel }}
+  jobLabel: {{ .Values.upstream.prometheusMonitoring.podMonitor.jobLabel | quote }}
+  {{- end }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app: upstream
+  endpoints:
+    - port: monitoring-ce
+      path: /metrics
+      scheme: http
+      interval: 30s
+      enableHttp2: false
+      {{- if .Values.istio.enabled }}
+      tlsConfig:
+        caFile: /etc/prom-certs/root-cert.pem
+        certFile: /etc/prom-certs/cert-chain.pem
+        keyFile: /etc/prom-certs/key.pem
+        insecureSkipVerify: true
+      {{ end }}
+    - port: monitoring-web
+      path: /metrics
+      scheme: http
+      interval: 30s
+      enableHttp2: false
+      {{- if .Values.istio.enabled }}
+      tlsConfig:
+        caFile: /etc/prom-certs/root-cert.pem
+        certFile: /etc/prom-certs/cert-chain.pem
+        keyFile: /etc/prom-certs/key.pem
+        insecureSkipVerify: true
+      {{ end }}
+    - port: http
+      path: {{ include "sonarqube.monitorcontext" . }}api/monitoring/metrics
+      scheme: https
+      {{- if .Values.upstream.prometheusMonitoring.podMonitor.interval }}
+      interval: {{ .Values.upstream.prometheusMonitoring.podMonitor.interval }}
+      {{- end }}
+      {{- if .Values.upstream.prometheusMonitoring.podMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.upstream.prometheusMonitoring.podMonitor.scrapeTimeout }}
+      {{- end }}
+      bearerTokenSecret:
+      {{- if and .Values.upstream.monitoringPasscodeSecretName .Values.upstream.monitoringPasscodeSecretKey }}
+        name: {{ .Values.upstream.monitoringPasscodeSecretName }}
+        key: {{ .Values.upstream.monitoringPasscodeSecretKey }}
+      {{- else }}
+        name: {{ template "sonarqube.fullname" . }}-monitoring-passcode
+        key: SONAR_WEB_SYSTEMPASSCODE
+      {{- end }}
+      {{- if .Values.istio.enabled }}
+      tlsConfig:
+        caFile: /etc/prom-certs/root-cert.pem
+        certFile: /etc/prom-certs/cert-chain.pem
+        keyFile: /etc/prom-certs/key.pem
+        insecureSkipVerify: true
+      {{ end }}
+{{- end }}

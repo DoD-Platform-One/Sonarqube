@@ -22,7 +22,7 @@
       "allowedVersions": "!/8.4/"
     },
     {
-      "matchPackageNames": ["ironbank/big-bang/sonarqube-10", "registry1.dso.mil/ironbank/big-bang/sonarqube-10"],
+      "matchPackageNames": ["ironbank/sonarsource/sonarqube/sonarqube-community-build", "registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"],
       "separateMajorMinor": true
     }
   ],
@@ -33,7 +33,7 @@
         "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
       ],
       "datasourceTemplate": "docker",
-      "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/sonarqube-10"
+      "depNameTemplate": "registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"
     },
     {
       "fileMatch": ["^chart/Chart\\.yaml$"],
@@ -42,7 +42,7 @@
       ],
       "extractVersionTemplate": "^(?<version>.*)-community$",
       "datasourceTemplate": "docker",
-      "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/sonarqube-10"
+      "depNameTemplate": "registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"
     },
     {
       "fileMatch": ["^chart/Chart\\.yaml$"],
@@ -50,7 +50,7 @@
         "- Sonarqube:\\s+(?<currentValue>.+)"
       ],
       "registryUrlTemplate": "https://registry1.dso.mil",
-      "depNameTemplate": "ironbank/big-bang/sonarqube-10",
+      "depNameTemplate": "ironbank/sonarsource/sonarqube/sonarqube-community-build",
       "datasourceTemplate": "docker"
     },
     {
@@ -59,7 +59,7 @@
         "image: sonarqube:(?<currentValue>.+)"
       ],
       "registryUrlTemplate": "https://registry1.dso.mil",
-      "depNameTemplate": "ironbank/big-bang/sonarqube-10",
+      "depNameTemplate": "ironbank/sonarsource/sonarqube/sonarqube-community-build",
       "datasourceTemplate": "docker"
     },
     {
@@ -69,7 +69,7 @@
       ],
 
       
-      "depNameTemplate": "ironbank/big-bang/sonarqube-10",
+      "depNameTemplate": "ironbank/sonarsource/sonarqube/sonarqube-community-build",
       "datasourceTemplate": "docker"
     },
     {

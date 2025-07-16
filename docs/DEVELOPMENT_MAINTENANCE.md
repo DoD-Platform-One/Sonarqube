@@ -12,11 +12,13 @@ Be sure to also test against monitoring locally as it is integrated by default w
 
 The below details the steps required to update to a new version of the Sonarqube package.
 
-1. Do diff of [upstream chart](https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube-lts) between old and new release tags to become aware of any significant chart changes. A graphical diff tool such as [Meld](https://meldmerge.org/) is useful. You can see where the current helm chart came from by inspecting ```/chart/kptfile```
-1. Create a development branch and merge request tied to the Repo1 issue created for the Sonarqube package upgrade.  The association between the branch and the issue can be made by prefixing the branch name with the issue number, e.g. 56-update-sonarqube-package. DO NOT create a branch if working renovate/ironbank. Continue edits on renovate/ironbank.
-1. From the root of this repository, sync the BigBang Sonarqube package chart with the upstream Sonarqube chart using `kpt pkg update chart@sonarqube-<target version> --strategy alpha-git-patch`.  Please note that kpt > v1.0.0 does NOT support this update strategy, and the latest kpt version that does is 0.39.2Merge/Sync the new helm chart with the existing package code. A graphical diff tool like [Meld](https://meldmerge.org/) is useful. Reference the "Modifications made to upstream chart" section below. Be careful not to overwrite Big Bang Package changes that need to be kept. Note that some files will have combinations of changes that you will overwrite and changes that you keep. Stay alert. The hardest file to update is the ```/chart/values.yaml```.
-1. In `chart/Chart.yaml` update gluon to the latest version and run `helm dependency update chart` from the top level of the repo to package it up.
-1. Modify the `image.tag` value in `chart/values.yaml` to point to the newest version.
+1. Renovate may have already made changes in the development branch. If that is the case then just verify that the changes are correct as you go through these steps.
+1. Discover the chart version tag that matches with the application version from the [upstream chart](https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube) by looking at the Chart.yaml. Do diff between old and new release tags to become aware of any significant chart changes. A graphical diff tool such as [Meld](https://meldmerge.org/) is useful. You can see where the current chart version and available versions are at under the `sources` section in Chart.yaml.`
+1. Read the /CHANGELOG.md from the release tag from upstream [upstream chart](https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube). Also, be aware of changes in the Gitlab chart that could affect the Sonarqube chart. Take note of any special upgrade instructions, if any.
+1. If Renovate has not created a development branch and merge request then manually create them.
+1. Merge/Sync the new helm chart with the existing Sonarqube package code. A graphical diff tool like [Meld](https://meldmerge.org/) is useful. Reference the "Modifications made to upstream chart" section below. Be careful not to overwrite Big Bang Package changes that need to be kept. Note that some files will have combinations of changes that you will overwrite and changes that you keep. Stay alert. The hardest file to update is the ```/chart/values.yaml``` because many defaults are changed.
+1. In `chart/Chart.yaml` update sonarqube and gluon to the latest version and run `helm dependency update chart` from the top level of the repo to package it up.
+1. In ```/chart/values.yaml``` update all the sonarqube image tags to the new version. There are 3 images: sonarqube, postgresql, and the ubi.
 1. Update `chart/Chart.yaml` to the appropriate versions. The annotation version should match the ```appVersion```.
 
     ```yaml
@@ -25,6 +27,26 @@ The below details the steps required to update to a new version of the Sonarqube
     annotations:
       bigbang.dev/applicationVersions: |
         - Sonarqube: X.X.X
+    dependencies:
+    - name: sonarqube
+      version: 'X.X.X'
+      repository: 'https://SonarSource.github.io/helm-chart-sonarqube'
+      alias: upstream
+    - name: gluon
+      version: 'X.X.X'
+      repository: 'oci://registry1.dso.mil/bigbang'
+    ```
+    ```yaml
+      helm.sh/images: |
+    - name: sonarqube
+      image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:X.X.X-community
+    - name: base
+      image: registry1.dso.mil/ironbank/big-bang/base:X.X.X
+    - name: postgresql
+      condition: postgresql.enabled
+      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:X.X.X
+    - name: ubi9
+      image: registry1.dso.mil/ironbank/redhat/ubi/ubi9:X.X
     ```
 
 1. Update `chart/Chart.yaml` `bigbang.dev/upstreamReleaseNotesMarkdown` to the correct tag links.
@@ -34,6 +56,13 @@ The below details the steps required to update to a new version of the Sonarqube
       bigbang.dev/upstreamReleaseNotesMarkdown: |
         - [Find our upstream chart's CHANGELOG here](https://link-goes-here/CHANGELOG.md)
         - [and our upstream application release notes here](https://another-link-here/RELEASE_NOTES.md)
+    ```
+
+1. Look in ```/chart/Chart.yaml``` at the dependencies and verify that you have the most recent versions of the [Big Bang Gluon](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/tags) library. If not, delete the ```/chart/charts/gluon-x.x.x.tgz```  and the ```/requirements.lock``` file. You will replace these files in the next step.
+1. Run a helm dependency command to update the chart/charts/*.tgz archives and create a new requirements.lock file. You will commit the tar archives along with the requirements.lock that was generated.  This will contain the new upstream chart to commit if you have updated the Chart.yaml versioning for the upstream and other dependency charts.
+
+    ```bash
+    helm dependency update ./chart
     ```
 
 1. Update `CHANGELOG.md` adding an entry for the new version and noting all changes.
@@ -94,27 +123,28 @@ addons:
       tag: null
       branch: "name-of-your-development-branch"
     values:
+      upstream:
+        prometheusExporter:
+          enabled: true
+          version: "0.17.2"
+          webBeanPort: 8000
+          ceBeanPort: 8001
+          config:
+            rules:
+            - pattern: ".*"
+          image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.17.2
+        monitoringPasscode: "define_it" # set this password to your instance admin password used for the UI
+        service:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: ""
+            prometheus.io/path: "/metrics"
       curlContainerImage: "registry1.dso.mil/ironbank/big-bang/base:2.1.0"
       monitoring:
         enabled: true
-      prometheusExporter:
-        enabled: true
-        version: "0.17.2"
-        webBeanPort: 8000
-        ceBeanPort: 8001
-        config:
-          rules:
-          - pattern: ".*"
-        image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.17.2
-      monitoringPasscode: "define_it" # set this password to your instance admin password used for the UI
       networkPolicy:
         enabled: false # additional network policies may be needed if set to "true"
         prometheusNamespace: "monitoring"
-      service:
-        annotations:
-          prometheus.io/scrape: "true"
-          prometheus.io/port: ""
-          prometheus.io/path: "/metrics"
       istio:
         enabled: true
         hardened:

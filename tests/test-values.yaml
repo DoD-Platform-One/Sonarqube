@@ -7,6 +7,8 @@ grafana:
   enabled: false
 neuvector:
   enabled: false
+bbctl:
+  enabled: false
 loki:
   enabled: false
 promtail:

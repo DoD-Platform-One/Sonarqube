@@ -23,6 +23,6 @@ spec:
     - route:
         - destination:
             port:
-              number: {{ .Values.service.externalPort }}
+              number: {{ .Values.upstream.service.externalPort }}
             host: {{ $serviceName }}
 {{- end }}
