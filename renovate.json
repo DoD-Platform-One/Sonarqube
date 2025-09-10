@@ -1,34 +1,63 @@
 {
-  "baseBranches": ["main"],
+  "baseBranches": [
+    "main"
+  ],
   "configWarningReuseIssue": false,
   "dependencyDashboard": true,
   "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
   "dependencyDashboardTitle": "Renovate: Upgrade SonarQube Package Dependencies",
   "draftPR": true,
-  "enabledManagers": ["helm-values", "regex", "helmv3"],
-  "labels": ["sonarqube", "Big Bang Add Ons", "Package Sustainment", "kind::maintenance", "renovate"],
-  "ignorePaths": ["**/.gitlab-ci.yml", "chart/requirements.yaml"],
+  "enabledManagers": [
+    "helm-values",
+    "custom.regex",
+    "helmv3"
+  ],
+  "labels": [
+    "sonarqube",
+    "Big Bang Add Ons",
+    "Package Sustainment",
+    "kind::maintenance",
+    "renovate"
+  ],
+  "ignorePaths": [
+    "**/.gitlab-ci.yml",
+    "chart/requirements.yaml"
+  ],
   "separateMajorMinor": false,
-  "postUpdateOptions": ["helmUpdateSubChartArchives"],
+  "postUpdateOptions": [
+    "helmUpdateSubChartArchives"
+  ],
   "commitMessagePrefix": "SKIP UPDATE CHECK",
   "packageRules": [
     {
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "groupName": "Ironbank",
-      "registryUrls": ["https://registry1.dso.mil"]
+      "registryUrls": [
+        "https://registry1.dso.mil"
+      ]
     },
     {
-      "matchPackageNames": ["registry1.dso.mil/ironbank/big-bang/base"],
+      "matchPackageNames": [
+        "registry1.dso.mil/ironbank/big-bang/base"
+      ],
       "allowedVersions": "!/8.4/"
     },
     {
-      "matchPackageNames": ["ironbank/sonarsource/sonarqube/sonarqube-community-build", "registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"],
+      "matchPackageNames": [
+        "ironbank/sonarsource/sonarqube/sonarqube-community-build",
+        "registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"
+      ],
       "separateMajorMinor": true
     }
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["^chart/values\\.yaml$"],
+      "customType": "regex",
+      "fileMatch": [
+        "^chart/values\\.yaml$"
+      ],
       "matchStrings": [
         "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
       ],
@@ -36,7 +65,10 @@
       "depNameTemplate": "registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"
     },
     {
-      "fileMatch": ["^chart/Chart\\.yaml$"],
+      "customType": "regex",
+      "fileMatch": [
+        "^chart/Chart\\.yaml$"
+      ],
       "matchStrings": [
         "appVersion:\\s+(?<currentValue>.+)"
       ],
@@ -45,7 +77,10 @@
       "depNameTemplate": "registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"
     },
     {
-      "fileMatch": ["^chart/Chart\\.yaml$"],
+      "customType": "regex",
+      "fileMatch": [
+        "^chart/Chart\\.yaml$"
+      ],
       "matchStrings": [
         "- Sonarqube:\\s+(?<currentValue>.+)"
       ],
@@ -54,7 +89,10 @@
       "datasourceTemplate": "docker"
     },
     {
-      "fileMatch": ["^chart/Chart\\.yaml$"],
+      "customType": "regex",
+      "fileMatch": [
+        "^chart/Chart\\.yaml$"
+      ],
       "matchStrings": [
         "image: sonarqube:(?<currentValue>.+)"
       ],
@@ -63,24 +101,31 @@
       "datasourceTemplate": "docker"
     },
     {
-      "fileMatch": ["^chart/Chart\\.yaml$"],
+      "customType": "regex",
+      "fileMatch": [
+        "^chart/Chart\\.yaml$"
+      ],
       "matchStrings": [
         "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
       ],
-
-      
       "depNameTemplate": "ironbank/sonarsource/sonarqube/sonarqube-community-build",
       "datasourceTemplate": "docker"
     },
     {
-      "fileMatch": ["^tests/test-values\\.yaml$"],
+      "customType": "regex",
+      "fileMatch": [
+        "^tests/test-values\\.yaml$"
+      ],
       "matchStrings": [
         "curlContainerImage:\\s+[^/]+/(?<depName>.+):s*(?<currentValue>.+)"
       ],
       "datasourceTemplate": "docker"
     },
     {
-      "fileMatch": ["^chart/deps/postgresql/values\\.yaml$"],
+      "customType": "regex",
+      "fileMatch": [
+        "^chart/deps/postgresql/values\\.yaml$"
+      ],
       "matchStrings": [
         "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
       ],
