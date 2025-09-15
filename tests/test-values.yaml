@@ -11,8 +11,6 @@ bbctl:
   enabled: false
 loki:
   enabled: false
-promtail:
-  enabled: false
 tempo:
   enabled: false
 kyvernoReporter:
