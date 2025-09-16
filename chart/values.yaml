@@ -102,7 +102,7 @@ upstream:
   # Set the chart to use the latest released SonarQube Community Build
   community:
     enabled: true
-    buildNumber: "25.1.0.102122"
+    buildNumber: "25.7.0.110598"
 
   postgresql:
     enabled: true
@@ -138,7 +138,7 @@ upstream:
 
   image:
     repository: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build #registry1.dso.mil/ironbank/big-bang/sonarqube-10
-    tag: 25.1.0.102122-community
+    tag: 25.7.0.110598-community
     pullPolicy: IfNotPresent
     # If using a private repository, the imagePullSecrets to use
     pullSecrets: []
@@ -882,5 +882,6 @@ bbtests:
       cypress_url: "http://sonarqube-sonarqube:9000"
       cypress_url_setup: "http://sonarqube-sonarqube:9000/setup"
       cypress_user: "admin"
-      cypress_password: "New_admin_password!2"
+      cypress_password: "admin"
+      cypress_new_password: "New_admin_password!2"
       cypress_timeout: "10000"

@@ -2,8 +2,8 @@ apiVersion: v2
 name: sonarqube
 description: SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution, SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects. The tool analyses 30+ different programming languages and integrates into your CI pipeline and DevOps platform to ensure that your code meets high-quality standards.
 type: application
-version: 2025.1.0-bb.1
-appVersion: 2025.1.0
+version: 2025.3.1-bb.0
+appVersion: 2025.3.1
 keywords:
 - coverage
 - security
@@ -16,49 +16,16 @@ sources:
 - https://github.com/SonarSource/docker-sonarqube
 - https://github.com/SonarSource/sonarqube
 kubeVersion: '>= 1.24.0-0'
-maintainers:
-- name: carminevassallo
-  email: carmine.vassallo@sonarsource.com
-- name: jCOTINEAU
-  email: jeremy.cotineau@sonarsource.com
-- name: davividal
-  email: davi.koscianski-vidal@sonarsource.com
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
-  artifacthub.io/links: |
-    - name: support
-      url: https://community.sonarsource.com/
-    - name: Chart Source
-      url: https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube
-  artifacthub.io/changes: |
-    - kind: changed
-      description: "Update Chart's version to 2025.1.0"
-    - kind: changed
-      description: "Upgrade SonarQube Server to 2025.1.0"
-    - kind: changed
-      description: "Upgrade SonarQube Community Build to 25.1.0.102122"
-    - kind: changed
-      description: "Update ingress-nginx subchart to 4.11.3"
-    - kind: changed
-      description: "Support Kubernetes v1.32"
-    - kind: changed
-      description: "Remove the default passcode provided with 'monitoringPasscode'"
-    - kind: changed
-      description: "Support Openshift v4.17"
-    - kind: changed
-      description: "Improves editions and versions setting for sonarqube chart"
-  artifacthub.io/containsSecurityUpdates: "false"
   bigbang.dev/upstreamReleaseNotesMarkdown: |
-    - [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.1.0-sonarqube-dce-2025.1.0/charts/sonarqube/CHANGELOG.md)
-    - [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.1.0-sonarqube-dce-2025.1.0/charts/sonarqube/README.md)
+    - [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.3.1-sonarqube-dce-2025.3.1/charts/sonarqube/CHANGELOG.md)
+    - [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.3.1-sonarqube-dce-2025.3.1/charts/sonarqube/README.md)
   bigbang.dev/applicationVersions: |
-    - Sonarqube: 25.1.0.102122-community
-  artifacthub.io/images: |
-    - name: sonarqube
-      image: sonarqube:25.1.0.102122-community
+    - Sonarqube: 25.7.0.110598-community
   helm.sh/images: |
     - name: sonarqube
-      image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.1.0.102122-community
+      image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.7.0.110598-community
     - name: base
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
     - name: postgresql
@@ -68,9 +35,9 @@ annotations:
       image: registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.6
 dependencies:
 - name: sonarqube
-  version: '2025.1.0'
+  version: '2025.3.1'
   repository: 'https://SonarSource.github.io/helm-chart-sonarqube'
   alias: upstream
 - name: gluon
-  version: '0.5.14'
+  version: '0.9.0'
   repository: 'oci://registry1.dso.mil/bigbang'

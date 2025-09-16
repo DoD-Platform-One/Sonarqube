@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # sonarqube
 
-![Version: 2025.1.0-bb.1](https://img.shields.io/badge/Version-2025.1.0--bb.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.1.0](https://img.shields.io/badge/AppVersion-2025.1.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 2025.3.1-bb.0](https://img.shields.io/badge/Version-2025.3.1--bb.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.3.1](https://img.shields.io/badge/AppVersion-2025.3.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution, SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects. The tool analyses 30+ different programming languages and integrates into your CI pipeline and DevOps platform to ensure that your code meets high-quality standards.
 
@@ -14,8 +14,8 @@ SonarQube is a self-managed, automatic code review tool that systematically help
 
 ## Upstream Release Notes
 
-- [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.1.0-sonarqube-dce-2025.1.0/charts/sonarqube/CHANGELOG.md)
-- [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.1.0-sonarqube-dce-2025.1.0/charts/sonarqube/README.md)
+- [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.3.1-sonarqube-dce-2025.3.1/charts/sonarqube/CHANGELOG.md)
+- [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.3.1-sonarqube-dce-2025.3.1/charts/sonarqube/README.md)
 
 ## Learn More
 
@@ -79,7 +79,7 @@ helm install sonarqube chart/
 | sso.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | upstream.fullnameOverride | string | `"sonarqube-sonarqube"` |  |
 | upstream.community.enabled | bool | `true` |  |
-| upstream.community.buildNumber | string | `"25.1.0.102122"` |  |
+| upstream.community.buildNumber | string | `"25.7.0.110598"` |  |
 | upstream.postgresql.enabled | bool | `true` |  |
 | upstream.postgresql.postgresqlUsername | string | `"sonarUser"` |  |
 | upstream.postgresql.postgresqlPassword | string | `"sonarPass"` |  |
@@ -101,7 +101,7 @@ helm install sonarqube chart/
 | upstream.postgresql.primary.persistence.size | string | `"20Gi"` |  |
 | upstream.postgresql.primary.persistence.mountPath | string | `"/var/lib/postgresql"` |  |
 | upstream.image.repository | string | `"registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"` |  |
-| upstream.image.tag | string | `"25.1.0.102122-community"` |  |
+| upstream.image.tag | string | `"25.7.0.110598-community"` |  |
 | upstream.image.pullPolicy | string | `"IfNotPresent"` |  |
 | upstream.image.pullSecrets | list | `[]` |  |
 | upstream.securityContext.fsGroup | int | `1000` |  |
@@ -279,7 +279,8 @@ helm install sonarqube chart/
 | bbtests.cypress.envs.cypress_url | string | `"http://sonarqube-sonarqube:9000"` |  |
 | bbtests.cypress.envs.cypress_url_setup | string | `"http://sonarqube-sonarqube:9000/setup"` |  |
 | bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
-| bbtests.cypress.envs.cypress_password | string | `"New_admin_password!2"` |  |
+| bbtests.cypress.envs.cypress_password | string | `"admin"` |  |
+| bbtests.cypress.envs.cypress_new_password | string | `"New_admin_password!2"` |  |
 | bbtests.cypress.envs.cypress_timeout | string | `"10000"` |  |
 
 ## Contributing
