@@ -12,6 +12,8 @@ Cypress.Commands.add('elementExists', (selector) => {
 
 const doLoginAndPostSteps = () => {
   return cy.url().then(url => {
+    cy.intercept('POST', '/api/authentication/login').as('loginRequest');
+
     cy.log(`Current URL in doLoginAndPostSteps: ${url}`);
     
     // Normal login flow only
@@ -21,9 +23,29 @@ const doLoginAndPostSteps = () => {
       .type(Cypress.env('user'));
     
     cy.get('input[name="password"]').type(Cypress.env('password'));
-    cy.get('#login_form > div > div > form > div:nth-child(3) > div > button').contains("Log in").click();
+    cy.get('button[type="submit"]').contains('Log in').click();
+
+    // If we have already run the password change, we need to use the new password to login vs the old one.
+    cy.wait('@loginRequest').then((request) => {
+     if (request.response.statusCode == 401) {
+       cy.get('input[name="password"]').clear();
+       cy.get('input[name="password"]').type(Cypress.env('new_password'));
+       cy.get('button[type="submit"]').contains('Log in').click();
+     }
+    });
+
     cy.wait(2000);
-    
+
+    // Handle the default password change screen
+    cy.url().then((currentURL) => {
+      if (currentURL.includes('reset_password')) {
+        cy.get('input[name="old_password"]').type(Cypress.env('password'));
+        cy.get('input#create-password').type(Cypress.env('new_password'));
+        cy.get('input#confirm-password').type(Cypress.env('new_password'));
+        cy.get("button#change-password").click()
+      }
+    })
+
     cy.wait(3000);
     
     // Handle the "Later" button if it appears
@@ -100,7 +122,7 @@ describe('Basic Sonarqube', function() {
     })
     
     cy.scrollTo('topRight', { duration: 500 })
-    cy.get('button#userAccountMenuDropdown-trigger', { timeout: customTimeout })
+    cy.get('button[aria-label="Account"]', { timeout: customTimeout })
       .should('be.visible')
       .click();
     cy.contains("My Account", { timeout: customTimeout }).click();

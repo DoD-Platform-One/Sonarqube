@@ -1,9 +1,9 @@
 dependencies:
 - name: sonarqube
   repository: https://SonarSource.github.io/helm-chart-sonarqube
-  version: 2025.1.0
+  version: 2025.3.1
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.5.14
-digest: sha256:505990bea19eb8bd9e7c2bd7af50fe4f522d02eefb8663e4366a60ddfa851c51
-generated: "2025-06-30T15:46:54.890309-05:00"
+digest: sha256:6af0e13f8be2e17032e4bba9c3d88488259d4c0567990b7a2b2bc8129931e07f
+generated: "2025-07-17T06:20:28.354911973Z"

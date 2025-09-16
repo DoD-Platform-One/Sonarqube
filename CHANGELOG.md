@@ -3,6 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [2025.3.1-bb.0] - 2025-07-18
+
+### Updated
+
+- sonarqube chart minor 2025.1.0 -> 2025.3.1
+- sonarqube app 25.1.0.102122-community -> 25.7.0.110598-community
+- gluon 0.5.14 -> 0.9.0
+
 ## [2025.2.0-bb.1] - 2025-07-22
 
 ### Updated
