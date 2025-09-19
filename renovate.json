@@ -55,8 +55,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "^chart/values\\.yaml$"
+      "managerFilePatterns": [
+        "/^chart/values\\.yaml$/"
       ],
       "matchStrings": [
         "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
@@ -66,8 +66,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^chart/Chart\\.yaml$"
+      "managerFilePatterns": [
+        "/^chart/Chart\\.yaml$/"
       ],
       "matchStrings": [
         "appVersion:\\s+(?<currentValue>.+)"
@@ -78,8 +78,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^chart/Chart\\.yaml$"
+      "managerFilePatterns": [
+        "/^chart/Chart\\.yaml$/"
       ],
       "matchStrings": [
         "- Sonarqube:\\s+(?<currentValue>.+)"
@@ -90,8 +90,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^chart/Chart\\.yaml$"
+      "managerFilePatterns": [
+        "/^chart/Chart\\.yaml$/"
       ],
       "matchStrings": [
         "image: sonarqube:(?<currentValue>.+)"
@@ -102,8 +102,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^chart/Chart\\.yaml$"
+      "managerFilePatterns": [
+        "/^chart/Chart\\.yaml$/"
       ],
       "matchStrings": [
         "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
@@ -113,8 +113,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^tests/test-values\\.yaml$"
+      "managerFilePatterns": [
+        "/^tests/test-values\\.yaml$/"
       ],
       "matchStrings": [
         "curlContainerImage:\\s+[^/]+/(?<depName>.+):s*(?<currentValue>.+)"
@@ -123,8 +123,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^chart/deps/postgresql/values\\.yaml$"
+      "managerFilePatterns": [
+        "/^chart/deps/postgresql/values\\.yaml$/"
       ],
       "matchStrings": [
         "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
