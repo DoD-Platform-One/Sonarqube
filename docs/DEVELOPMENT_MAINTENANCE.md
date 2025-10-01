@@ -36,6 +36,7 @@ The below details the steps required to update to a new version of the Sonarqube
       version: 'X.X.X'
       repository: 'oci://registry1.dso.mil/bigbang'
     ```
+
     ```yaml
       helm.sh/images: |
     - name: sonarqube
