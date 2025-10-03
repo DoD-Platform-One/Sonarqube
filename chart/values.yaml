@@ -157,6 +157,9 @@ upstream:
         memory: 300Mi
         cpu: 50m
 
+  initFs:
+    enabled: false
+
   waitForDb:
     image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:16.2
 
