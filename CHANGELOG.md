@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [2025.4.2-bb.2] - 2025-10-06
+
+### Updated
+
+- Allow HTTPS Egress Network Policy fix Incorrect podSelector
+- Set 'upstream.prometheusExporter.downloadURL' to use local JAR file from Ironbank image instead of downloading from Maven Central`
+
+
 ## [2025.4.2-bb.1] - 2025-10-03
 
 ### Updated
