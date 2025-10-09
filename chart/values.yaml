@@ -58,7 +58,7 @@ upstream:
   # Set the chart to use the latest released SonarQube Community Build
   community:
     enabled: true
-    buildNumber: "25.8.0.112029"
+    buildNumber: "25.10.0.114319"
 
   postgresql:
     enabled: true
@@ -93,8 +93,8 @@ upstream:
         mountPath: /var/lib/postgresql
 
   image:
-    repository: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build #registry1.dso.mil/ironbank/big-bang/sonarqube-10
-    tag: 25.8.0.112029-community
+    repository: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build
+    tag: 25.10.0.114319-community
     pullSecrets: []
 
   # Set security context for sonarqube pod.

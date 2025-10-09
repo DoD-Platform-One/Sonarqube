@@ -4,6 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2025.5.0-bb.0] - 2025-10-08
+
+### Updated
+
+- gluon patch 0.9.0 -> 0.9.3
+- sonarqube chart minor 2025.4.2 -> 2025.5.0
+- sonarqube app 25.8.0.112029-community -> 25.10.0.114319-community
+
+
 ## [2025.4.2-bb.2] - 2025-10-06
 
 ### Updated
