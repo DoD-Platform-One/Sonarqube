@@ -7,6 +7,7 @@
   "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
   "dependencyDashboardTitle": "Renovate: Upgrade SonarQube Package Dependencies",
   "draftPR": true,
+  "branchName": "renovate/ironbank",
   "enabledManagers": [
     "helm-values",
     "custom.regex",
@@ -27,12 +28,9 @@
   "postUpdateOptions": [
     "helmUpdateSubChartArchives"
   ],
-  "commitMessagePrefix": "SKIP UPDATE CHECK",
   "packageRules": [
     {
-      "matchDatasources": [
-        "docker"
-      ],
+      "matchManagers": ["custom.regex"],
       "groupName": "Ironbank",
       "registryUrls": [
         "https://registry1.dso.mil"
