@@ -82,7 +82,7 @@ describe('Basic Sonarqube', function() {
         
         // Navigate to setup page
         cy.visit(Cypress.env('url') + '/setup');
-        cy.get('button[type="button"]', { timeout: customTimeout }).click();
+        cy.contains('span', 'Continue', { timeout: customTimeout }).should('be.visible').click();
         cy.get('button[id="start-migration"]', { timeout: customTimeout }).click();
         cy.contains('Database is up-to-date', { timeout: customTimeout });
         cy.contains('SonarQube is starting', { timeout: customTimeout });
