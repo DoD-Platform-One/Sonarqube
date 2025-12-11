@@ -75,7 +75,7 @@ upstream:
     image:
       registry: registry1.dso.mil
       repository: ironbank/opensource/postgres/postgresql
-      tag: "16.2"
+      tag: "18.1"
       pullSecrets:
       - private-registry
     primary:
@@ -94,7 +94,7 @@ upstream:
 
   image:
     repository: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build
-    tag: 25.10.0.114319-community
+    tag: 25.11.0.114957-community
     pullSecrets: []
 
   # Set security context for sonarqube pod.
@@ -162,7 +162,7 @@ upstream:
     enabled: false
 
   waitForDb:
-    image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:16.2
+    image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:18.1
 
   initSysctl:
     enabled: false
@@ -177,7 +177,7 @@ upstream:
     downloadURL: "file:///opt/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar"
 
   plugins:
-    image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.8.0.112029-community #registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.7.0-community
+    image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.11.0.114957-community #registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.7.0-community
 
   monitoringPasscode: "define_it"
 
@@ -223,7 +223,7 @@ upstream:
 
 ## Bigbang security package kyverno will, by default, block images that don't originate from registry1.dso.mil
 # curlContainerImage: curlimages/curl:latest
-curlContainerImage: "registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.6"
+curlContainerImage: "registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.7"
 
 ## Your FQDN will be ${ .Values.subdomain }.${ .Values.domain }
 domain: dev.bigbang.mil
