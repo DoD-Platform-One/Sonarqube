@@ -1,8 +1,8 @@
 # Files that require bigbang integration testing
 
-### See [bb MR testing](./docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart
+### See [bb MR testing](../docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart
 
-There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within sonarqube (see: [istio templates](./chart/templates/bigbang/istio/), [network policy templates](./chart/templates/bigbang/networkpolicies/), [service entry templates](./chart/templates/bigbang/serviceentries/)).
+There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within sonarqube (see: [istio templates](..//chart/templates/bigbang/istio/), [network policy templates](../chart/templates/bigbang/networkpolicies/), [service entry templates](../chart/templates/bigbang/serviceentries/)).
 
 Be aware that any changes to files listed in the [Modifications made to upstream chart](#modifications-made-to-upstream-chart) section will also require a codeowner to validate the changes using above method, to ensure that they do not affect the package or its integrations adversely.
 

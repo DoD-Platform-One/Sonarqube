@@ -3,13 +3,24 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [2025.5.0-bb.2] - 2025-12-10
+
+### Updated
+
+- update gluon patch 0.9.3 -> 0.9.7
+- update sonarqube app 25.10.0.114319--community -> 25.11.0.114957-community
+- update registry1.dso.mil/ironbank/redhat/ubi/ubi9 (source) 9.6 -> 9.7
+- update registry1.dso.mil/ironbank/opensource/postgres/postgresql (source) 16.2 -> 18.1
+
 ## [2025.5.0-bb.1] - 2025-10-09
 
 ### Updated
 
 - Fix renovate to consolidate changes into one MR
 - Removed SKIP UPDATE CHECK from the default renovate title
-- 
+
+
 ## [2025.5.0-bb.0] - 2025-10-08
 
 ### Updated
