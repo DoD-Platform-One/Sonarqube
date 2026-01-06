@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2025.6.1-bb.1] - 2025-01-06
+
+### Updated
+
+- update sonarqube app 25.11.0.114957-community -> 25.12.0.117093-community
+
+
 ## [2025.6.1-bb.0] - 2025-12-29
 
 ### Updated
