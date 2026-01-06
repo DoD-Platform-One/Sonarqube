@@ -58,7 +58,7 @@ upstream:
   # Set the chart to use the latest released SonarQube Community Build
   community:
     enabled: true
-    buildNumber: "25.10.0.114319"
+    buildNumber: "25.12.0.117093"
 
   postgresql:
     enabled: true
@@ -94,7 +94,7 @@ upstream:
 
   image:
     repository: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build
-    tag: 25.11.0.114957-community
+    tag: 25.12.0.117093-community
     pullSecrets: []
 
   # Set security context for sonarqube pod.
@@ -177,7 +177,7 @@ upstream:
     downloadURL: "file:///opt/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar"
 
   plugins:
-    image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.11.0.114957-community #registry1.dso.mil/ironbank/big-bang/sonarqube-10:10.7.0-community
+    image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.12.0.117093-community
 
   monitoringPasscode: "define_it"
 
