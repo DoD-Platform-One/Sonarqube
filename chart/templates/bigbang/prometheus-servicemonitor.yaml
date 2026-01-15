@@ -1,4 +1,4 @@
-{{- if and .Values.monitoring.enabled .Values.upstream.prometheusExporter.enabled }}
+{{- if .Values.upstream.prometheusExporter.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -22,11 +22,11 @@ spec:
     - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app: upstream
+      app: sonarqube
   endpoints:
     - port: monitoring-ce
       path: /metrics
-      scheme: http
+      scheme: https
       interval: 30s
       enableHttp2: false
       {{- if .Values.istio.enabled }}
@@ -38,7 +38,7 @@ spec:
       {{ end }}
     - port: monitoring-web
       path: /metrics
-      scheme: http
+      scheme: https
       interval: 30s
       enableHttp2: false
       {{- if .Values.istio.enabled }}

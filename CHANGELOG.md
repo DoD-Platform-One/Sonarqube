@@ -4,6 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2025.6.1-bb.2] - 2026-01-12
+
+### Updated
+
+- Integrated bb-common and replaced static resources with bb-common generated resources
+- Disabled telemetry to reduce outbound calls
+- Fixed label and tls config in service monitor so that it works properly
+- Removed unnecessary peer authentication exclusion
+
 ## [2025.6.1-bb.1] - 2026-01-06
 
 ### Updated
