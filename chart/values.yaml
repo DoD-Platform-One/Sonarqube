@@ -188,7 +188,6 @@ upstream:
   env:
   - name: JDK_JAVA_OPTIONS
     value: "-Dcom.redhat.fips=false"
-
   ## We usually don't make specific resource recommendations, as they are heavily dependant on
   ## the usage of SonarQube and the surrounding infrastructure.
   ## Those default are based on the default Web -Xmx1G -Xms128m and CE -Xmx2G -Xms128m and Search -Xmx2G -Xms2G settings of SQ sub processes
@@ -209,6 +208,10 @@ upstream:
     sonar.ce.javaAdditionalOpts: "-Dcom.redhat.fips=false"
     sonar.search.javaAdditionalOpts: "-Dcom.redhat.fips=false"
     sonar.web.javaAdditionalOpts: "-Dcom.redhat.fips=false"
+    ## By default Sonarqube sends anonymized telemetry data to the Sonarsource site
+    ## This environment variable disables that functionality reducing outbound calls; set the to `true` to enable that functionality
+    ## https://docs.sonarsource.com/sonarqube-server/instance-administration/system-functions/telemetry
+    sonar.telemetry.enable: false
 
   tests:
     image: bitnami/minideb-extras
@@ -228,53 +231,85 @@ curlContainerImage: "registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.7"
 ## Your FQDN will be ${ .Values.subdomain }.${ .Values.domain }
 domain: dev.bigbang.mil
 istio:
-  # Toggle istio integration
   enabled: false
-  hardened:
+
+  sidecar:
     enabled: false
-    customAuthorizationPolicies: []
     outboundTrafficPolicyMode: "REGISTRY_ONLY"
-    customServiceEntries: []
-    tempo:
-      enabled: true
-      namespaces:
-      - tempo
-      principals:
-      - cluster.local/ns/tempo/sa/tempo-tempo
-    monitoring:
-      enabled: true
-      namespaces:
-      - monitoring
-      principals:
-      - cluster.local/ns/monitoring/sa/monitoring-grafana
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter
-  # -- Default argocd peer authentication
+
+  serviceEntries:
+    custom: []
+
+  authorizationPolicies:
+    enabled: false
+    custom: []
+
+  # Default sonarqube peer authentication
   mtls:
-    # -- STRICT = Allow only mutual TLS traffic,
+    # STRICT = Allow only mutual TLS traffic
     # PERMISSIVE = Allow both plain text and mutual TLS traffic
     mode: STRICT
-  sonarqube:
-    # Toggle vs creation
-    enabled: true
-    annotations: {}
-    labels: {}
-    gateways:
-    - istio-system/main
-    hosts:
-    - sonarqube.{{ .Values.domain }}
-  injection: disabled
-monitoring:
+
+routes:
+  inbound:
+    sonarqube:
+      enabled: true
+      gateways:
+        - istio-gateway/public-ingressgateway
+      hosts:
+        - sonarqube.dev.bigbang.mil
+      service: sonarqube-sonarqube.sonarqube.svc.cluster.local
+      port: 9000
+      selector:
+        app: sonarqube
+
+
+OpenShift:
   enabled: false
 
 networkPolicies:
   enabled: false
-  ingressLabels:
-    app: istio-ingressgateway
-    istio: ingressgateway
+  ingress:
+    to:
+      sonarqube:[8000,8001,9000]:
+        podSelector:
+          matchLabels:
+            app: sonarqube
+        from:
+          k8s:
+            monitoring-monitoring-kube-prometheus@monitoring/prometheus: false
+  egress:
+    definitions:
+      sonarsource-marketplace:
+        to:
+          - ipBlock:
+              cidr: "0.0.0.0/0"
+              except:
+                - 169.254.169.254/32
+        ports:
+          - port: 443
+            protocol: TCP
+      code-repository:
+        to:
+          - ipBlock:
+              cidr: "0.0.0.0/0"
+              except:
+                - 169.254.169.254/32
+        ports:
+          - port: 443
+            protocol: TCP
+    from:
+      sonarqube:
+        podSelector:
+          matchLabels:
+            app: sonarqube
+        to:
+          k8s:
+            tempo/tempo:9411: false
+          definition:
+            sonarsource-marketplace: false
+            code-repository: true
+  # -- This section will be deprecated in the next major release in favor of the bb-common definitions
   egressHttps:
     enabled: true
   # Additional network policies
