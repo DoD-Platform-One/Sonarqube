@@ -1,11 +1,55 @@
-{{ if .Values.sso.enabled }}
-# Job to perform integration of SSO to sonarqube
+{{- if .Values.sso.idpmetadataurl }}
+# Create the service account to use for the pod
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: configure-sso-certificate-secret-sa
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+---
+# Create the role to ensure it can create k8s secrets; may need more if it needs to first check for the secret first
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: configure-sso-certificate-secret-role
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create", "get", "patch"]
+---
+# Bind the role to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: configure-sso-certificate-secret-role-binding
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: configure-sso-certificate-secret-role
+subjects:
+- kind: ServiceAccount
+  name: configure-sso-certificate-secret-sa
+  namespace: {{ .Release.Namespace }}
+---
+# Job to fetch cert from url and create the secret
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: configure-sso
+  name: configure-sso-certificate-secret
   labels:
-    app: {{ template "sonarqube.name" . }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
@@ -13,12 +57,13 @@ metadata:
     {{ $key }}: {{ $value | quote }}
   {{- end }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "-5"
 spec:
   template:
     metadata:
-      name: configure-sso
+      name: configure-sso-certificate-secret
       labels:
         app: {{ template "sonarqube.name" . }}
         heritage: {{ .Release.Service }}
@@ -27,6 +72,7 @@ spec:
         {{ $key }}: {{ $value | quote }}
       {{- end }}
     spec:
+      serviceAccountName: configure-sso-certificate-secret-sa
       restartPolicy: OnFailure
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
@@ -39,130 +85,40 @@ spec:
             - -c
             - |
               set -e
-              cd "/ftmp"
+              
+              # Set values to use to make sure job doesn't go on forever if it fails
+              max_retries=10
+              retry_count=0
+              sso_url="{{ .Values.sso.idpmetadataurl }}"
 
               # Wait for the given SAML IdP metadata url to exist and give data back
-              while [ $(curl -s -o /dev/null -w "%{http_code}" "{{ .Values.sso.idpmetadataurl }}") -ne 200 ]; do
-                echo "Waiting for IdP metadata..."
-                sleep 10;
+              while [ "$retry_count" -lt "$max_retries" ]; do
+                http_code=$(curl -s --max-time 5 -o /dev/null -w "%{http_code}" "$sso_url")
+              
+                if [ "$http_code" -eq 200 ]; then
+                  echo "IdP URL is live..."
+                  break
+                else
+                  retry_count=$((retry_count + 1))
+                  echo "Waiting for IdP metadata..."
+                  sleep 10
+                fi
               done
-              echo "IdP URL is live..."
+              
+              if [ "$retry_count" -ge "$max_retries" ]; then
+                echo "Failed to reach IdP URL $sso_url"
+                exit 1
+              fi
 
-              # Wait until SonarQube system status is UP
-              until curl -v --connect-timeout 100 {{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/system/status | grep -w UP; do
-              echo "Waiting for SonarQube to be live..."
-              sleep 10
-              done
-            {{- if and .Values.istio.enabled (eq .Values.istio.injection "enabled") }}
-              until curl -fsI http://localhost:15021/healthz/ready; do
-                echo "Waiting for Istio sidecar proxy..."
-                sleep 3
-              done
-              sleep 5
-            {{- end }}
-              echo "SonarQube URL is live..."  
-             
-              # Use the IDP_URL to get the metadata XML
-              idp_metadata_xml_raw=$(curl -s {{ .Values.sso.idpmetadataurl }})
-              # write keycloak metadata to xml file
-              idp_metadata_xml=$(echo ${idp_metadata_xml_raw} > idp_metadata_xml_raw.xml)
-              echo "Converting XML file to YAML"
-              yq idp_metadata_xml_raw.xml | yq -p xml > idp_metadata.yaml
-              # Create variables from idp_metadata.yaml file
-              idp_descriptor_id=$(yq eval '.EntityDescriptor.+@entityID' idp_metadata.yaml)
-              idp_descriptor_sso=$(yq eval '.EntityDescriptor.IDPSSODescriptor.SingleSignOnService.0.+@Location' idp_metadata.yaml)
-              idp_descriptor_cert=$(yq eval '.EntityDescriptor.IDPSSODescriptor.KeyDescriptor.KeyInfo.X509Data.X509Certificate' idp_metadata.yaml)
-              echo "copy configmap /tmp/sonar.properties to /ftmp"
-              cp /tmp/sonar.properties .
-              echo "write saml variable to sonar.properties config file"
-              sed -i "/sonar.auth.saml.providerId:/a $idp_descriptor_id" sonar.properties
-              sed -i "/sonar.auth.saml.loginUrl:/a $idp_descriptor_sso" sonar.properties
-              sed -i "/sonar.auth.saml.certificate.secured:/a $idp_descriptor_cert" sonar.properties
-              sed -i "/^$/d" sonar.properties
-                            
-              echo "set sonar.properties through API..."
-              # read ftmp/sonar.properties and capture values in variables
-              applicationid_value=$(sed -n "/sonar.auth.saml.applicationId:/{n;p}" sonar.properties)
-              providername_value=$(sed -n "/sonar.auth.saml.providerName:/{n;p}" sonar.properties)
-              providerid_value=$(sed -n "/sonar.auth.saml.providerId:/{n;p}" sonar.properties)
-              loginurl_value=$(sed -n "/sonar.auth.saml.loginUrl:/{n;p}" sonar.properties)
-              x509cert_value=$(sed -n "/sonar.auth.saml.certificate.secured:/{n;p}" sonar.properties)
-              name_value=$(sed -n "/sonar.auth.saml.user.name:/{n;p}" sonar.properties)
-              login_value=$(sed -n "/sonar.auth.saml.user.login:/{n;p}" sonar.properties)
-              email_value=$(sed -n "/sonar.auth.saml.user.email:/{n;p}" sonar.properties)
-              group_value=$(sed -n "/sonar.auth.saml.group.name:/{n;p}" sonar.properties)
-                                       
-              # post config to sonarqube api to internal endpoint
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.enabled" \
-              --data-urlencode "value=true"
+              # Use the IDP_URL to get the metadata XML and extract the required certificate
+              echo "Attempting to retrieve certificate..."
+              sso_certificate=$(curl -s "$sso_url" | yq --xml-keep-namespace=false --xml-attribute-prefix="" -p xml -o yaml | yq .EntityDescriptor.IDPSSODescriptor.KeyDescriptor.KeyInfo.X509Data.X509Certificate)
 
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.core.serverBaseURL" \
-              --data-urlencode "value={{ .Values.sso.serverBaseURL }}"
+              # Create or patch existing secret
+              kubectl create secret generic sonarqube-sonarqube-secret --from-literal=secret.properties="sonar.auth.saml.certificate.secured=$sso_certificate" -n sonarqube --dry-run=client -o yaml | kubectl apply -f -
 
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.applicationId" \
-              --data-urlencode "value=$applicationid_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.providerName" \
-              --data-urlencode "value=$providername_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.providerId" \
-              --data-urlencode "value=$providerid_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.loginUrl" \
-              --data-urlencode "value=$loginurl_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.certificate.secured" \
-              --data-urlencode "value=$x509cert_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.user.name" \
-              --data-urlencode "value=$name_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.user.login" \
-              --data-urlencode "value=$login_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.user.email" \
-              --data-urlencode "value=$email_value"
-
-              curl -X POST -u admin:{{ .Values.upstream.account.currentAdminPassword }} "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.upstream.service.internalPort }}/api/settings/set" \
-              --data-urlencode "key=sonar.auth.saml.user.group" \
-              --data-urlencode "value=$group_value"
-
-              echo "DONE updating sonarqube saml API..."
-
-              {{- if eq .Values.istio.injection "enabled" }}
-              until curl -fsI http://localhost:15021/healthz/ready; do
-                echo "Waiting for Istio sidecar proxy..."
-                sleep 3
-              done
-              {{ if and .Values.istio.enabled (eq .Values.istio.injection "enabled") }}
-              sleep 5
-              echo "Stopping the istio proxy..."
-              curl -X POST http://localhost:15020/quitquitquit
-              {{ end }}
-              {{- end }}
-          volumeMounts:
-            - name: sonarqube-sso-config
-              mountPath: "/tmp"
-              readOnly: true
-            - name: sonarqube-sso
-              mountPath: "/ftmp"
+              echo "DONE creating sso ceritificate secret..."
           resources:
             {{ toYaml .Values.sso.resources | nindent 12 }}    
-      volumes:
-        - name: sonarqube-sso-config
-          configMap:
-            name: sonarqube-sso-config
-        - name: sonarqube-sso
-          emptyDir: {}
 {{- end }}
 

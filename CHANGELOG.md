@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2025.6.1-bb.3] - 2026-01-22
+
+### Updated
+
+- Configured job to retrieve certificate for SSO authentication automatically in scenario where Keycloak is located in same cluster
+
 ## [2025.6.1-bb.2] - 2026-01-12
 
 ### Updated
