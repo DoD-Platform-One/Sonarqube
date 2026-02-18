@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # sonarqube
 
-![Version: 2025.6.1-bb.3](https://img.shields.io/badge/Version-2025.6.1--bb.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.6.1](https://img.shields.io/badge/AppVersion-2025.6.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 2025.6.1-bb.4](https://img.shields.io/badge/Version-2025.6.1--bb.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2025.6.1](https://img.shields.io/badge/AppVersion-2025.6.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 SonarQube is a self-managed, automatic code review tool that systematically helps you deliver clean code. As a core element of our Sonar solution, SonarQube integrates into your existing workflow and detects issues in your code to help you perform continuous code inspections of your projects. The tool analyses 30+ different programming languages and integrates into your CI pipeline and DevOps platform to ensure that your code meets high-quality standards.
 
@@ -14,8 +14,8 @@ SonarQube is a self-managed, automatic code review tool that systematically help
 
 ## Upstream Release Notes
 
-- [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.6.0-sonarqube-dce-2025.6.0/charts/sonarqube/CHANGELOG.md)
-- [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2025.6.0-sonarqube-dce-2025.6.0/charts/sonarqube/README.md)
+- [Find our upstream chart's CHANGELOG here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2026.1.0-sonarqube-dce-2026.1.0/charts/sonarqube/CHANGELOG.md)
+- [and our upstream application release notes here](https://github.com/SonarSource/helm-chart-sonarqube/blob/sonarqube-2026.1.0-sonarqube-dce-2026.1.0/charts/sonarqube/README.md)
 
 ## Learn More
 
@@ -28,7 +28,7 @@ SonarQube is a self-managed, automatic code review tool that systematically help
 - Kubernetes config installed in `~/.kube/config`
 - Helm installed
 
-Kubernetes: `>= 1.24.0-0`
+Kubernetes: `>= 1.32.0-0`
 
 Install Helm
 
@@ -66,7 +66,54 @@ helm install sonarqube chart/
 | sso.containerSecurityContext.runAsUser | int | `26` |  |
 | sso.containerSecurityContext.runAsGroup | int | `26` |  |
 | sso.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| upstream | object | `{"community":{"buildNumber":"25.12.0.117093","enabled":true},"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"runAsGroup":1000},"env":[{"name":"JDK_JAVA_OPTIONS","value":"-Dcom.redhat.fips=false"}],"fullnameOverride":"sonarqube-sonarqube","image":{"pullSecrets":[],"repository":"registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build","tag":"25.12.0.117093-community"},"initContainers":{"image":"registry1.dso.mil/ironbank/big-bang/base:2.1.0","readOnlyRootFilesystem":true,"resources":{"limits":{"cpu":"50m","memory":"300Mi"},"requests":{"cpu":"50m","memory":"300Mi"}},"securityContext":{"runAsGroup":1000}},"initFs":{"enabled":false},"initSysctl":{"enabled":false,"securityContext":{"capabilities":{"drop":["ALL"]}}},"livenessProbe":{"exec":{"command":["sh","-c","curl --silent --fail --output /dev/null --max-time {{ .Values.livenessProbe.timeoutSeconds \| default 1 }} --header \"X-Sonar-Passcode: $SONAR_WEB_SYSTEMPASSCODE\" \"http://localhost:{{ .Values.service.internalPort }}{{ .Values.livenessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/liveness\"\n"]}},"monitoringPasscode":"define_it","nameOverride":"sonarqube","nginx":{"enabled":false},"persistence":{"size":"20Gi"},"plugins":{"image":"registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.12.0.117093-community"},"postgresql":{"auth":{"database":"sonarDB","enablePostgresUser":true,"password":"sonarPass","username":"sonarUser"},"enabled":true,"image":{"pullSecrets":["private-registry"],"registry":"registry1.dso.mil","repository":"ironbank/opensource/postgres/postgresql","tag":"18.1"},"postgresqlDatabase":"sonarDB","postgresqlPassword":"sonarPass","postgresqlUsername":"sonarUser","primary":{"extraEnvVars":[{"name":"POSTGRES_DB","value":"sonarDB"}],"extraVolumeMounts":[{"mountPath":"/var/run/postgresql","name":"runtime"}],"extraVolumes":[{"emptyDir":{},"name":"runtime"}],"persistence":{"mountPath":"/var/lib/postgresql","size":"20Gi"}}},"prometheusExporter":{"downloadURL":"file:///opt/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar","image":"registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:1.0.1"},"readinessProbe":{"exec":{"command":["sh","-c","#!/bin/bash\n# A Sonarqube container is considered ready if the status is UP, DB_MIGRATION_NEEDED or DB_MIGRATION_RUNNING\n# status about migration are added to prevent the node to be kill while sonarqube is upgrading the database.\nif curl -s http://localhost:{{ .Values.service.internalPort }}{{ .Values.readinessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/status \| grep -q -e '\"status\":\"UP\"' -e '\"status\":\"DB_MIGRATION_NEEDED\"' -e '\"status\":\"DB_MIGRATION_RUNNING\"'; then\n  exit 0\nfi\nexit 1\n"]},"timeoutSeconds":90},"resources":{"limits":{"cpu":"1000m"},"requests":{"cpu":"500m"}},"securityContext":{"fsGroup":1000,"runAsGroup":1000,"runAsUser":1000},"serviceAccount":{"create":true},"sonarProperties":{"sonar.ce.javaAdditionalOpts":"-Dcom.redhat.fips=false","sonar.forceAuthentication":true,"sonar.search.javaAdditionalOpts":"-Dcom.redhat.fips=false","sonar.telemetry.enable":false,"sonar.web.javaAdditionalOpts":"-Dcom.redhat.fips=false"},"tests":{"enabled":false,"image":"bitnami/minideb-extras","resources":{}},"waitForDb":{"image":"registry1.dso.mil/ironbank/opensource/postgres/postgresql:18.1"}}` | We are exposing only the keys that BigBang overrides from the upstream chart. Please refer to the [upstream chart](https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/values.yaml) for other value configs. |
+| upstream.fullnameOverride | string | `"sonarqube-sonarqube"` |  |
+| upstream.nameOverride | string | `"sonarqube"` |  |
+| upstream.community.enabled | bool | `true` |  |
+| upstream.community.buildNumber | string | `"26.2.0.119303"` |  |
+| upstream.image.repository | string | `"registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build"` |  |
+| upstream.image.tag | string | `"26.2.0.119303-community"` |  |
+| upstream.image.pullSecrets | list | `[]` |  |
+| upstream.securityContext.fsGroup | int | `1000` |  |
+| upstream.securityContext.runAsUser | int | `1000` |  |
+| upstream.securityContext.runAsGroup | int | `1000` |  |
+| upstream.containerSecurityContext.runAsGroup | int | `1000` |  |
+| upstream.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| upstream.nginx.enabled | bool | `false` |  |
+| upstream.readinessProbe.exec.command[0] | string | `"sh"` |  |
+| upstream.readinessProbe.exec.command[1] | string | `"-c"` |  |
+| upstream.readinessProbe.exec.command[2] | string | `"#!/bin/bash\n# A Sonarqube container is considered ready if the status is UP, DB_MIGRATION_NEEDED or DB_MIGRATION_RUNNING\n# status about migration are added to prevent the node to be kill while sonarqube is upgrading the database.\nif curl -s http://localhost:{{ .Values.service.internalPort }}{{ .Values.readinessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/status \| grep -q -e '\"status\":\"UP\"' -e '\"status\":\"DB_MIGRATION_NEEDED\"' -e '\"status\":\"DB_MIGRATION_RUNNING\"'; then\n  exit 0\nfi\nexit 1\n"` |  |
+| upstream.readinessProbe.timeoutSeconds | int | `90` |  |
+| upstream.livenessProbe.exec.command[0] | string | `"sh"` |  |
+| upstream.livenessProbe.exec.command[1] | string | `"-c"` |  |
+| upstream.livenessProbe.exec.command[2] | string | `"curl --silent --fail --output /dev/null --max-time {{ .Values.livenessProbe.timeoutSeconds \| default 1 }} --header \"X-Sonar-Passcode: $SONAR_WEB_SYSTEMPASSCODE\" \"http://localhost:{{ .Values.service.internalPort }}{{ .Values.livenessProbe.sonarWebContext \| default (include \"sonarqube.webcontext\" .) }}api/system/liveness\"\n"` |  |
+| upstream.initContainers.image | string | `"registry1.dso.mil/ironbank/big-bang/base:2.1.0"` |  |
+| upstream.initContainers.securityContext.runAsGroup | int | `1000` |  |
+| upstream.initContainers.readOnlyRootFilesystem | bool | `true` |  |
+| upstream.initContainers.resources.limits.memory | string | `"300Mi"` |  |
+| upstream.initContainers.resources.limits.cpu | string | `"50m"` |  |
+| upstream.initContainers.resources.requests.memory | string | `"300Mi"` |  |
+| upstream.initContainers.resources.requests.cpu | string | `"50m"` |  |
+| upstream.initFs.enabled | bool | `false` |  |
+| upstream.initSysctl.enabled | bool | `false` |  |
+| upstream.initSysctl.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| upstream.prometheusExporter.image | string | `"registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:1.0.1"` |  |
+| upstream.prometheusExporter.downloadURL | string | `"file:///opt/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar"` |  |
+| upstream.plugins.image | string | `"registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:26.2.0.119303-community"` |  |
+| upstream.monitoringPasscode | string | `"define_it"` |  |
+| upstream.env[0].name | string | `"JDK_JAVA_OPTIONS"` |  |
+| upstream.env[0].value | string | `"-Dcom.redhat.fips=false"` |  |
+| upstream.resources.limits.cpu | string | `"1000m"` |  |
+| upstream.resources.requests.cpu | string | `"500m"` |  |
+| upstream.persistence.size | string | `"20Gi"` |  |
+| upstream.sonarProperties."sonar.forceAuthentication" | bool | `true` |  |
+| upstream.sonarProperties."sonar.ce.javaAdditionalOpts" | string | `"-Dcom.redhat.fips=false"` |  |
+| upstream.sonarProperties."sonar.search.javaAdditionalOpts" | string | `"-Dcom.redhat.fips=false"` |  |
+| upstream.sonarProperties."sonar.web.javaAdditionalOpts" | string | `"-Dcom.redhat.fips=false"` |  |
+| upstream.sonarProperties."sonar.telemetry.enable" | bool | `false` |  |
+| upstream.tests.image | string | `"bitnami/minideb-extras"` |  |
+| upstream.tests.enabled | bool | `false` |  |
+| upstream.tests.resources | object | `{}` |  |
+| upstream.serviceAccount.create | bool | `true` |  |
 | curlContainerImage | string | `"registry1.dso.mil/ironbank/redhat/ubi/ubi9:9.7"` |  |
 | domain | string | `"dev.bigbang.mil"` |  |
 | istio.enabled | bool | `false` |  |

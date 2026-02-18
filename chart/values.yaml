@@ -48,9 +48,9 @@ sso:
       drop:
       - ALL
 
-# -- We are exposing only the keys that BigBang overrides from the upstream chart. Please refer to the [upstream chart](https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/values.yaml) for other value configs.
+#  We are exposing only the keys that BigBang overrides from the upstream chart. Please refer to the [upstream chart](https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/values.yaml) for other value configs.
 upstream:
-  ## declaring fullnameoverride and nameoverride to resolve pipeline virtual service failure and network policy issues.
+  # declaring fullnameoverride and nameoverride to resolve pipeline virtual service failure and network policy issues.
   fullnameOverride: "sonarqube-sonarqube"
   nameOverride: "sonarqube"
   # Configure the edition of SonarQube Server to deploy: developer or enterprise
@@ -58,43 +58,11 @@ upstream:
   # Set the chart to use the latest released SonarQube Community Build
   community:
     enabled: true
-    buildNumber: "25.12.0.117093"
-
-  postgresql:
-    enabled: true
-    postgresqlUsername: "sonarUser"
-    postgresqlPassword: "sonarPass"
-    postgresqlDatabase: "sonarDB"
-
-    auth:
-      enablePostgresUser: true
-      username: "sonarUser"
-      password: "sonarPass"
-      database: "sonarDB"
-
-    image:
-      registry: registry1.dso.mil
-      repository: ironbank/opensource/postgres/postgresql
-      tag: "18.1"
-      pullSecrets:
-      - private-registry
-    primary:
-      extraEnvVars:
-        - name: POSTGRES_DB
-          value: sonarDB
-      extraVolumeMounts:
-        - name: runtime
-          mountPath: /var/run/postgresql
-      extraVolumes:
-        - name: runtime
-          emptyDir: {}
-      persistence:
-        size: 20Gi
-        mountPath: /var/lib/postgresql
+    buildNumber: "26.2.0.119303"
 
   image:
     repository: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build
-    tag: 25.12.0.117093-community
+    tag: 26.2.0.119303-community
     pullSecrets: []
 
   # Set security context for sonarqube pod.
@@ -161,9 +129,6 @@ upstream:
   initFs:
     enabled: false
 
-  waitForDb:
-    image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:18.1
-
   initSysctl:
     enabled: false
 
@@ -177,7 +142,7 @@ upstream:
     downloadURL: "file:///opt/jmx_exporter/jmx_prometheus_javaagent-1.0.1.jar"
 
   plugins:
-    image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:25.12.0.117093-community
+    image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:26.2.0.119303-community
 
   monitoringPasscode: "define_it"
 

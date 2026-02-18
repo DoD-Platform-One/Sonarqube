@@ -4,6 +4,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2025.6.1-bb.4] - 2026-02-17
+
+### Updated
+
+- update bb-common 0.12.3 -> 0.14.0
+- update gluon 0.9.7 -> 0.9.8
+- update ironbank/sonarsource/sonarqube/sonarqube-community-build 25.12.0.117093-community -> 26.2.0.119303-community
+- update ironbank/opensource/postgres/postgresql  18.1 -> 18.2
+- update sonarqube 2025.6.1 -> 2026.1.0
+- Removed embedded postgresql configurations
+
 ## [2025.6.1-bb.3] - 2026-01-22
 
 ### Updated
