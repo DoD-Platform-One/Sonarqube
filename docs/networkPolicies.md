@@ -1,38 +1,5 @@
-Harbor (like many other BigBang components) allows you to specify additional network controls through values provided to the chart.
+# Network Policies
 
-In order to deliver additional NetworkPolicy controls with your BigBang sonarqube deployment, first enable networkPolicies for BigBang generally:
+This chart is configured to use [bb-common](https://repo1.dso.mil/big-bang/product/packages/bb-common) to provide network policy configuration. The network policy for this repository is configured in [values.yaml](../chart/values.yaml#L270). Additionally, there is a [network-policies.yaml](../chart/templates/bigbang/network-policies.yaml) template which renders bb-common configuration.
 
-```
-networkPolicies:
-  enabled: true
-```
-
-Now you can add additional NetworkPolicies to your sonarqube addon configuration through the `addons.sonarqube.values.networkPolicies.additionalPolicies` key:
-
-```
-addons:
-  sonarqube:
-    values:
-      networkPolicies:
-        additionalPolicies:
-        - name: this-is-an-egress-control
-          spec:
-            podSelector: {}
-            policyTypes:
-            - Egress
-            egress:
-            - to:
-              - ipBlock:
-                  cidr: 172.20.0.0/12
-        - name: this-is-an-ingress-control
-          spec:
-            podSelector: {}
-            policyTypes:
-            - Ingress
-            ingress:
-            - from:
-              - ipBlock:
-                  cidr: 172.20.0.0/12
-```
-
-For more information on Kubernetes NetworkPolicy objects, see [the upstream docs](https://kubernetes.io/docs/concepts/services-networking/network-policies/). For more information on BigBang Network controls generally, see the BigBang documentation.
+For additional configuration please refer to the [bb-common Network Policies documentation](https://repo1.dso.mil/big-bang/product/packages/bb-common/-/blob/main/docs/network-policies/README.md).
