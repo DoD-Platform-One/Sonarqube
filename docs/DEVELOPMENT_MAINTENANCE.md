@@ -1,6 +1,6 @@
 # Files that require bigbang integration testing
 
-### See [bb MR testing](../docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart
+__See [bb MR testing](../docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart__
 
 There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within sonarqube (see: [istio templates](..//chart/templates/bigbang/istio/), [network policy templates](../chart/templates/bigbang/networkpolicies/), [service entry templates](../chart/templates/bigbang/serviceentries/)).
 
@@ -8,7 +8,7 @@ Be aware that any changes to files listed in the [Modifications made to upstream
 
 Be sure to also test against monitoring locally as it is integrated by default with these high-impact service control packages, and needs to be validated using the necessary chart values beneath `istio.hardened` block with `monitoring.enabled` set to true as part of your dev-overrides.yaml
 
-# Upgrading to a new version
+## Upgrading to a new version
 
 The below details the steps required to update to a new version of the Sonarqube package.
 
@@ -18,7 +18,7 @@ The below details the steps required to update to a new version of the Sonarqube
 1. If Renovate has not created a development branch and merge request then manually create them.
 1. Merge/Sync the new helm chart with the existing Sonarqube package code. A graphical diff tool like [Meld](https://meldmerge.org/) is useful. Reference the "Modifications made to upstream chart" section below. Be careful not to overwrite Big Bang Package changes that need to be kept. Note that some files will have combinations of changes that you will overwrite and changes that you keep. Stay alert. The hardest file to update is the ```/chart/values.yaml``` because many defaults are changed.
 1. In `chart/Chart.yaml` update sonarqube and gluon to the latest version and run `helm dependency update chart` from the top level of the repo to package it up.
-1. In ```/chart/values.yaml``` update all the sonarqube image tags to the new version. There are 3 images: sonarqube, postgresql, and the ubi.
+1. In ```/chart/values.yaml``` update all the sonarqube image tags to the new version. There are several images: sonarqube, base, jmx-exporter, and the ubi.
 1. Update `chart/Chart.yaml` to the appropriate versions. The annotation version should match the ```appVersion```.
 
     ```yaml
@@ -43,9 +43,6 @@ The below details the steps required to update to a new version of the Sonarqube
       image: registry1.dso.mil/ironbank/sonarsource/sonarqube/sonarqube-community-build:X.X.X-community
     - name: base
       image: registry1.dso.mil/ironbank/big-bang/base:X.X.X
-    - name: postgresql
-      condition: postgresql.enabled
-      image: registry1.dso.mil/ironbank/opensource/postgres/postgresql:X.X.X
     - name: ubi9
       image: registry1.dso.mil/ironbank/redhat/ubi/ubi9:X.X
     ```
@@ -71,32 +68,16 @@ The below details the steps required to update to a new version of the Sonarqube
 1. Open an MR in "Draft" status and validate that CI passes. This will perform a number of smoke tests against the package, but it is good to manually deploy to test some things that CI doesn't.
 1. Once all manual testing is complete take your MR out of "Draft" status and add the review label.
 
-# How to test Sonarqube
+## How to test Sonarqube
 
 Deploy and login with both admin user and sso.
 
-## Test Basic Functionality and Monitoring
+### Test Basic Functionality and Monitoring
 
 Deploy with the following Big Bang override values to test the repo job and monitoring interaction:
 
 ```yaml
-clusterAuditor:
-  enabled: false
-
 gatekeeper:
-  enabled: false
-
-istioOperator:
-  enabled: true
-
-istio:
-  enabled: true
-  # Istio hardened will be enabled by default in the future (https://repo1.dso.mil/big-bang/bigbang/-/issues/2037)
-  values:
-    hardened:
-      enabled: true
-
-jaeger:
   enabled: false
 
 kiali:
@@ -127,13 +108,13 @@ addons:
       upstream:
         prometheusExporter:
           enabled: true
-          version: "0.17.2"
+          version: "1.0.1"
           webBeanPort: 8000
           ceBeanPort: 8001
           config:
             rules:
             - pattern: ".*"
-          image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:0.17.2
+          image: registry1.dso.mil/ironbank/opensource/prometheus/jmx-exporter:1.0.1
         monitoringPasscode: "define_it" # set this password to your instance admin password used for the UI
         service:
           annotations:
@@ -169,80 +150,45 @@ addons:
 1. Navigate to the Prometheus target page (<https://prometheus.dev.bigbang.mil/targets>) and validate that the Sonarqube target shows as up.
    - If the prometheus targets are not showing then follow this document on setting up the prometheus exporter and podmonitor [Prometheus.md](Prometheus.md)
 
-# Modifications made to upstream chart
+## Modifications made to upstream chart
 
 This is a high-level list of modifications that Big Bang has made to the upstream helm chart. You can use this as as cross-check to make sure that no modifications were lost during an upgrade process.
 
-## chart/templates/change-admin-password-hook.yml
-
-- add if logic to use a correct curl command if using precreated secret for admin `password` and `currentPassword`
-
-## chart/charts/*.tgz
+### chart/charts/*.tgz
 
 - add the gluon library archive from ```helm dependency update ./chart```
 
 - commit the tar archives that were downloaded from the helm dependency update command. And also commit the requirements.lock that was generated.
 
-## chart/deps/postgresql/*
-
-- Bitnami postgres chart for development
-
-## chart/templates/bigbang/*
+### chart/templates/bigbang/*
 
 - add istio VirtualService
 - add ServiceMonitor
 - add PeerAuthentication
 - add NetworkPolicies
 
-## chart/templates/tests/*
+### chart/templates/tests/*
 
 - add templates for helm tests sonarqube-cypress-test.yaml
 
-## chart/templates/deployment.yaml & sonarqube-sts.yaml
-
-- remove default images
-- change waitForDb from using `nc` to a `pg_isready`
-- modify caCert init container to conditionally use command/args from values
-
-## chart/templates/install-plugins.yaml
-
-- switched upstream cat/wget plugin install to curl
-
-## chart/templates/change-admin-password-hook.yaml
-
-- re-write job with istio termination
-- change `hook-delete-policy` to add `before-hook-creation`
-
-## chart/templates/NOTES.txt
-
-- Added istio.enabled wraper
-
-## chart/templates/_helpers.tpl
+### chart/templates/_helpers.tpl
 
 - Added define "deployment.waitForDb.compatible"
 - Added define "sonarqube.chart"
 
-## chart/templates/_pod.tpl
-
-- Set metadata.labels to use `sonarqube.workloadLabels` variable as it already has the standard Kubernetes labels
-
-## chart/tests/cypress/*
+### chart/tests/cypress/*
 
 - add cypress tests
 
-## chart/Chart.yaml
+### chart/Chart.yaml
 
 - changes for Big Bang version, gluon dependency, and annotations
 
-# chart/Chart.lock
+### chart/Chart.lock
 
 - add this file during helm dependency update
 
-## chart/Kptfile
-
-- add Kptfile
-
-## chart/values.yaml
+### chart/values.yaml
 
 - curlContainerImage updated to use registry1 hardened curl-capable image
 - Big Bang additions at the bottom of the values file
