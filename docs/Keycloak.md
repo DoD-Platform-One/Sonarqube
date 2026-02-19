@@ -4,8 +4,7 @@
 
 ## Resources to setup keycloak-dev on a dev-cluster
 
-1. You will need a K8s development environment with two Gateway resources configured. One for passthrough and the other for public. Use the `k3d-dev.sh` script with the `-a` flag to deploy a dev cluster with MetalLB. See the keycloak [Cluster Setup](https://repo1.dso.mil/big-bang/product/packages/keycloak/-/blob/main/docs/DEVELOPMENT_MAINTENANCE.md?ref_type=heads#cluster-setup) documentation for detailed instructions.
-2. Deploy Bigbang to the cluster using the [Deploy Bigbang](https://repo1.dso.mil/big-bang/product/packages/keycloak/-/blob/main/docs/DEVELOPMENT_MAINTENANCE.md?ref_type=heads#deploy-bigbang) documentation as a reference. You will need to make an override file for Sonarqube that points to your branch.
+1. Deploy Bigbang to the cluster using the [Deploy Bigbang](https://repo1.dso.mil/big-bang/product/packages/keycloak/-/blob/main/docs/DEVELOPMENT_MAINTENANCE.md?ref_type=heads#deploy-bigbang) documentation as a reference. You will need to make an override file for Sonarqube that points to your branch.
 
     ```yaml
     # ./overrides/sonarqube-sso-override.yaml
@@ -39,11 +38,9 @@
 
       keycloak:
         enabled: true
-        git:
-          branch: main
     ```
 
-3. Deploy Bigbang with the appropriate override files. Be sure to include overrides the `keycloak` repo as well as your `sonarqube` override. If you followed the instructions from step 2, your registry credentials will be set using the following command.
+1. Deploy Bigbang with the appropriate override files. Be sure to include overrides the `keycloak` repo as well as your `sonarqube` override. If you followed the instructions from step 2, your registry credentials will be set using the following command.
 
     ```bash
     REGISTRY_USERNAME=your_registry_username
@@ -52,12 +49,11 @@
     --set registryCredentials.username=${REGISTRY_USERNAME} --set registryCredentials.password=${REGISTRY_PASSWORD} \
     -f ./bigbang/tests/test-values.yaml \
     -f ./bigbang/chart/ingress-certs.yaml \
-    -f ./keycloak/docs/dev-overrides/minimal.yaml \
-    -f ./keycloak/docs/dev-overrides/keycloak-testing.yaml \
+    -f ./keycloak/docs/dev-overrides/enable-sso.yaml \
     -f ./overrides/sonarqube-sso-override.yaml 
     ```
 
-4. Check to see that keycloak has deployed successfully
+1. Check to see that keycloak has deployed successfully
 
     ```bash
     kubectl get helmrelease keycloak -n bigbang
@@ -70,7 +66,7 @@
     keycloak   12m   True    Helm install succeeded for release keycloak/keycloak.v1 with chart keycloak@2.5.1-bb.5
     ```
 
-5. Once keycloak is deployed, you will need to obtain parameters to use in the SSO metadata parameter of `./overrides/sonarqube-sso-override.yaml`
+1. Once keycloak is deployed, you will need to obtain parameters to use in the SSO metadata parameter of `./overrides/sonarqube-sso-override.yaml`
 
     ```bash
     # Obtain metadata
@@ -88,7 +84,7 @@
           metadata: '<md:EntityDescriptor xmlns=....'
     ```
 
-6. Repeat step 3 to and deploy Bigbang with the new SSO parameter
+1. Repeat step 3 to and deploy Bigbang with the new SSO parameter
 
     ```bash
     REGISTRY_USERNAME=your_registry_username
@@ -97,8 +93,7 @@
     --set registryCredentials.username=${REGISTRY_USERNAME} --set registryCredentials.password=${REGISTRY_PASSWORD} \
     -f ./bigbang/tests/test-values.yaml \
     -f ./bigbang/chart/ingress-certs.yaml \
-    -f ./keycloak/docs/dev-overrides/minimal.yaml \
-    -f ./keycloak/docs/dev-overrides/keycloak-testing.yaml \
+    -f ./keycloak/docs/dev-overrides/enable-sso.yaml \
     -f ./overrides/sonarqube-sso-override.yaml 
     ```
 
@@ -121,7 +116,7 @@ When deploying keycloak, the `baby-yoda` realm and a client for Sonarqube will a
 1. Log in to Keycloak. The username is `admin` and the password can be found using this command
 
     ```bash
-    kubectl get secret -n keycloak keycloak-env -o jsonpath='{.data.KEYCLOAK_ADMIN_PASSWORD}' | base64 -d
+    kubectl get secret -n keycloak keycloak-keycloak-env -o jsonpath='{.data.KEYCLOAK_ADMIN_PASSWORD}' | base64 -d
     ```
 
     There may be a trailing `%` character after decoding, which should be ignored.
@@ -138,7 +133,7 @@ When deploying keycloak, the `baby-yoda` realm and a client for Sonarqube will a
 
 ## (Automated Method) Configure SAML in Sonarqube
 
-You will use the settings captured above and update `./overrides/sonarqube-sso-override.yaml` with these settings:
+You will use the settings captured above and update `./overrides/sonarqube-sso-override.yaml` with the settings below. For a better understanding of these values, review the [Sonarqube Overview of SAML Support](https://docs.sonarsource.com/sonarqube-server/instance-administration/authentication/saml/overview#settings) documentation.
 
 ```yaml
 addons:
@@ -186,7 +181,7 @@ kubectl get secret -n sonarqube sonarqube-sonarqube-admin-password --template={{
 There may be a trailing `%` character after decoding, which should be ignored.
 
 1. Log in to Sonarqube. Go to Administration > Configuration > Authentication. Click "SAML" then click the "Create configuration" button.
-2. On the next screen, input the following parameters:
+1. On the next screen, input the following parameters:
 
     - **Application ID**: Set this to the `clientId` value that was captured from Keycloak
     - **Provider Name**: Set this to the identity provider name of your choice. `Keycloak` is fine
@@ -203,21 +198,21 @@ There may be a trailing `%` character after decoding, which should be ignored.
 
     Click "Save Configuration".
 
-3. In the next screen click "Test Configuration" and a new tab will pop up and prompt you to create an account. After creating the account you may not receive a confirmation email, but this can be bypassed in Keycloak.
+1. In the next screen click "Test Configuration" and a new tab will pop up and prompt you to create an account. After creating the account you may not receive a confirmation email, but this can be bypassed in Keycloak.
 
-4. Navigate to Keycloak in the browser. Ensure you are in the "DoD Platform One" realm, and click "users" in the left navigation bar. Click on the account you just created, and ensure the "emailVerified" slider is switched on. If you used your CAC to sign up, this may already be verified.
+1. Navigate to Keycloak in the browser. Ensure you are in the "DoD Platform One" realm, and click "users" in the left navigation bar. Click on the account you just created, and ensure the "emailVerified" slider is switched on. If you used your CAC to sign up, this may already be verified.
 
-5. Click on the "groups" tab. Ensure your account is added to "Impact Level 2 Authorized"
+1. Click on the "groups" tab. Ensure your account is added to "Impact Level 2 Authorized"
 
-6. Navigate back to Sonarqube. Go to Administration > Configuration > Authentication. Click the "Enable configuration" button, and SAML authentication via Keycloak will now be enabled.
+1. Navigate back to Sonarqube. Go to Administration > Configuration > Authentication. Click the "Enable configuration" button, and SAML authentication via Keycloak will now be enabled.
 
 ## Logging in to Sonarqube using Keycloak SSO
 
 1. If you are currently log in as `admin` in Sonarqube, Click the account icon in the upper right corner of the page, and then click "Log out"
 
-2. Navigate to Sonarqube and click "Log in with SSO". Use the credentials on the account you just created, and you should be logged in to Sonarqube as a user.
+1. Navigate to Sonarqube and click "Log in with SSO". Use the credentials on the account you just created, and you should be logged in to Sonarqube as a user.
 
-# Alternative configurations
+## Alternative configurations
 
 This section details how to manually configure components in Keycloak
 
@@ -233,7 +228,7 @@ This section details how to manually configure components in Keycloak
 
     Click "Next" to proceed.
 
-2. On the Login Settings page, set the following values:
+1. On the Login Settings page, set the following values:
     - **Root URL**: This can be left blank
     - **Home URL**: This can be left blank
     - **Valid redirect URIs**: This should be set to `https://<your.sonarqube.url>/oauth2/callback/saml*`
@@ -245,8 +240,8 @@ This section details how to manually configure components in Keycloak
 ## Configure the new client in Keycloak
 
 1. In the menu bar, click "Clients" then click the `sonarqube` client that you created
-2. Click on the "Client scopes" tab and then click the `sonarqube-dedicated` client scope
-3. Click "Configure a new mapper". In the next window, select "User property" and configure the following settings:
+1. Click on the "Client scopes" tab and then click the `sonarqube-dedicated` client scope
+1. Click "Configure a new mapper". In the next window, select "User property" and configure the following settings:
 
     - **Mapper Type**: User Property
     - **Name**: Set this to `Login`
@@ -257,7 +252,7 @@ This section details how to manually configure components in Keycloak
   
     Click "Save"
 
-4. In the breadcrumb navigation bar, click "Dedicated scopes", then click "Add mapper" and select "By configuration". In the next window select "User Property" and configure the following settings:
+1. In the breadcrumb navigation bar, click "Dedicated scopes", then click "Add mapper" and select "By configuration". In the next window select "User Property" and configure the following settings:
 
     - **Mapper Type**: User Property
     - **Name**: Set this to `Name`
@@ -268,7 +263,7 @@ This section details how to manually configure components in Keycloak
 
     Click "Save"
 
-5. In the breadcrumb navigation bar, click "Dedicated scopes", then click "Add mapper" and select "By configuration". In the next window select "User Property" and configure the following settings:
+1. In the breadcrumb navigation bar, click "Dedicated scopes", then click "Add mapper" and select "By configuration". In the next window select "User Property" and configure the following settings:
 
     - **Mapper Type**: User Property
     - **Name**: Set this to `Email`
@@ -277,6 +272,6 @@ This section details how to manually configure components in Keycloak
     - **SAML Attribute Name**: Set this to `email`
     - **SAML Attribute NameFormat**: Leave this set to `Basic`
 
-6. In Realm Settings > General > Endpoints, click on SAML 2.0 Identify Provider Metadata to obtain the XML configuration file from Keycloak.
+1. In Realm Settings > General > Endpoints, click on SAML 2.0 Identify Provider Metadata to obtain the XML configuration file from Keycloak.
 
 If required, additional group parameters can be configured by following the [Sonarqube keycloak how-to](https://docs.sonarsource.com/sonarqube-server/latest/instance-administration/authentication/saml/how-to-set-up-keycloak/) documentation.
